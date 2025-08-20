@@ -39,9 +39,9 @@ LLM with parameter scales ranging from tens of billions to trillions are being r
 - Controlled tensor memory pool to ensure address security and reusability.
 - Integration and adaptation of performance-critical custom operators (e.g., *PageAttention*, *AllReduce*).
 
-**MoE Kernel Optimization**
+**Kernel Optimization**
 - *GroupMatmul* optimization to improve computational efficiency.
-- Chunked Prefill optimization to support long-sequence inputs.
+- *Chunked Prefill* optimization to support long-sequence inputs.
 
 **Efficient Memory Optimization**
 - Mapping management between discrete physical memory and continuous virtual memory.
@@ -85,13 +85,11 @@ LLM with parameter scales ranging from tens of billions to trillions are being r
 ```
 
 Supported models list:
-- DeepSeek-V2/V3/R1
+- DeepSeek-V3/R1
 - DeepSeek-R1-Distill-Qwen
 - Kimi-k2
-- Llama3/2
-- rhino
-- Chatrhino
-- minicpmv
+- Llama2/3
+- MiniCPM-V
 - Qwen2/2.5/QwQ
 - Qwen2.5-VL
 - Qwen3 / Qwen3-MoE

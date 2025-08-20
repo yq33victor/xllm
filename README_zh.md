@@ -36,9 +36,9 @@ xLLM 提供了强大的智能计算能力，通过硬件系统的算力优化与
 - 受管控的显存池，保证地址安全可复用；
 - 集成适配性能关键的自定义算子（如 *PageAttention*, *AllReduce*）。
 
-**MoE算子优化**
+**算子优化**
 - *GroupMatmul* 优化，提升计算效率；
-- Chunked Prefill 优化，支撑长序列输入。
+- *Chunked Prefill* 优化，支撑长序列输入。
 
 **高效显存优化**
 - 离散物理内存与连续虚拟内存的映射管理；
@@ -83,13 +83,11 @@ xLLM 提供了强大的智能计算能力，通过硬件系统的算力优化与
 ```
 
 当前支持模型列表：
-- DeepSeek-V2/V3/R1
+- DeepSeek-V3/R1
 - DeepSeek-R1-Distill-Qwen
 - Kimi-k2
-- Llama3/2
-- rhino
-- Chatrhino
-- minicpmv
+- Llama2/3
+- MiniCPM-V
 - Qwen2/2.5/QwQ
 - Qwen2.5-VL
 - Qwen3 / Qwen3-MoE
