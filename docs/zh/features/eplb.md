@@ -13,7 +13,7 @@ xLLM eplb功能主要通过以下三个模块实现：
 ![xLLM eplb](../../assets/eplb_architecture.png)
 
 ## 使用方式
-只需在启动 xllm 时加上下面的 gflag 参数即可：
+只需在启动 xLLM 时加上下面的 gflag 参数即可：
 
 ```bash
   --enable_eplb=true 

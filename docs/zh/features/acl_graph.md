@@ -5,7 +5,7 @@
 
 为了优化Host侧调度性能，华为Ascend近期推出了类似CUDA Graph的图模式方案ACLGraph。与采用CPU密集小任务提交、NPU频繁启动小Kernel的传统模式相比，ACLGraph模式通过在CPU一次提交大任务后，NPU内部流式执行小kernel，显著降低了启动时间和NPU气泡。
 
-在xllm引擎中使用ACLGraph功能，我们实现了以下特性：
+在xLLM引擎中使用ACLGraph功能，我们实现了以下特性：
 ### 动态维度参数化
   - 将关键动态维度（如批大小和序列长度）作为整图输入参数，从而提高灵活性。在进行图的内存分配和内核配置时，利用这些动态参数计算实际所需值，例如通过公式$block\_table\_size = batch\_size * (max\_seq\_len / block\_size$)计算block_table的大小。在图启动阶段，则将实际的批大小和最大序列长度作为参数传入，以确保kerenel能够使用正确的stride来访问数据。
 
@@ -15,7 +15,7 @@
 
 ## 使用方式
 
-上述功能已经在xllm引擎内部进行了实现，对用户透明，用户无需关注内部实现细节，在适用的场景直接开启相关功能即可。通过gflags参数`enable_aclgraph`开启。参数默认为false，如需开启在xllm的服务启动脚本中设置为true即可，示例如下：
+上述功能已经在xLLM引擎内部进行了实现，对用户透明，用户无需关注内部实现细节，在适用的场景直接开启相关功能即可。通过gflags参数`enable_aclgraph`开启。参数默认为false，如需开启在xLLM的服务启动脚本中设置为true即可，示例如下：
 ```shell
 --enable_aclgraph=true
 ```

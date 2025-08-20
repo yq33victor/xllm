@@ -16,7 +16,7 @@
 * `PageManagerPool`：用于管理所有的device上的`PageManager`。
 
 ## 使用方式
-只需在启动 xllm 时加上下面的 gflag 参数即可：
+只需在启动 xLLM 时加上下面的 gflag 参数即可：
 
 ```bash
 --enable_continuous_kvcache=true
