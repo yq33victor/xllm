@@ -27,16 +27,17 @@ cmake ..
 make -j 8
 cd ..
 ```
-> 这里能会遇到关于`boost-locale`和`boost-interprocess`的安装错误：`vcpkg-src/packages/boost-locale_x64-linux/include: No such file or directory`,`/vcpkg-src/packages/boost-interprocess_x64-linux/include: No such file or directory`
-我们使用`vcpkg`重新安装这些包:
-```bash
-/path/to/vcpkg remove boost-locale boost-interprocess
-/path/to/vcpkg install boost-locale:x64-linux
-/path/to/vcpkg install boost-interprocess:x64-linux
-```
+!!! warning "可能的错误"
+    这里能会遇到关于`boost-locale`和`boost-interprocess`的安装错误：`vcpkg-src/packages/boost-locale_x64-linux/include: No such     file or directory`,`/vcpkg-src/packages/boost-interprocess_x64-linux/include: No such file or directory`
+    我们使用`vcpkg`重新安装这些包:
+    ```bash
+    /path/to/vcpkg remove boost-locale boost-interprocess
+    /path/to/vcpkg install boost-locale:x64-linux
+    /path/to/vcpkg install boost-interprocess:x64-linux
+    ```
 ## PD分离运行
 启动etcd:
-```bash
+```bash 
 ./etcd-download-test/etcd --listen-peer-urls 'http://localhost:2390'  --listen-client-urls 'http://localhost:2389' --advertise-client-urls  'http://localhost:2391'
 ```
 启动xllm service:
@@ -57,7 +58,7 @@ bash start_pd.sh
 bash start_pd.sh decode
 ```
 start_pd.sh脚本如下:
-```bash title="start_pd.sh"
+```bash title="start_pd.sh" linenums="1" hl_lines="36 58"
 export PYTHON_INCLUDE_PATH="$(python3 -c 'from sysconfig import get_paths; print(get_paths()["include"])')"
 export PYTHON_LIB_PATH="$(python3 -c 'from sysconfig import get_paths; print(get_paths()["include"])')"
 export PYTORCH_NPU_INSTALL_PATH=/usr/local/libtorch_npu/  # NPU 版 PyTorch 路径
@@ -93,7 +94,7 @@ if [ "$1" = "decode" ]; then
   --host=127.0.0.1 \
   --disagg_pd_port=7780 \
   --cluster_id=1 \
-  --device_ip=11.86.23.217 \
+  --device_ip=0.0.0.0 \
   --transfer_listen_port=26001 \
   --enable_service_routing=true
 else
@@ -115,7 +116,7 @@ else
   --xservice_addr=127.0.0.1:9889  \
   --host=127.0.0.1 \
   --cluster_id=0 \
-  --device_ip=11.86.23.216 \
+  --device_ip=0.0.0.0 \
   --transfer_listen_port=26000 \
   --disagg_pd_port=7781 \
   --enable_service_routing=true

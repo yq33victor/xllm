@@ -6,6 +6,7 @@ xLLM支持chunked prefill调度策略。Chunked prefill是一种优化大语言�
 
 ## 使用方式
 上述策略已在xLLM实现，并向外暴露gflag参数，控制功能的开关。
+
 - 开启chunked prefill，并设置chunked_size。
 ```
 --enable_chunked_prefill=true
@@ -13,7 +14,4 @@ xLLM支持chunked prefill调度策略。Chunked prefill是一种优化大语言�
 ```
 
 ## 性能效果
-开启chunked_prefill之后，在Qwen3-8B模型上，限制TPOT 50ms，TTFT时延**下降46%**。
-
-## 注意事项
-无
+开启chunked_prefill之后，在Qwen3-8B模型上，限制TPOT 50ms，TTFT时延 **下降46%**。

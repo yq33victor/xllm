@@ -6,6 +6,7 @@ xLLM支持zero_evict调度策略。zero_evict调度策略是一种尽可能减�
 
 ## 使用方式
 上述策略已在xLLM实现，并向外暴露gflag参数，控制功能的开关。
+
 - 开启zero_evict策略，并设置max_decode_token_per_sequence。
 ```
 --use_zero_evict=true
@@ -13,7 +14,4 @@ xLLM支持zero_evict调度策略。zero_evict调度策略是一种尽可能减�
 ```
 
 ## 性能效果
-开启zero_evict之后，在Qwen3-8B模型上，限制E2E时延，TPOT时延**下降27%**。
-
-## 注意事项
-无
+开启zero_evict之后，在Qwen3-8B模型上，限制E2E时延，TPOT时延 **下降27%**。

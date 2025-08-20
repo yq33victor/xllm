@@ -4,7 +4,7 @@
 bash start_qwen.sh
 ```
 start_qwen.sh 脚本如下:
-```bash title="start_qwen.sh"
+```bash title="start_qwen.sh" linenums="1"
 # 1. 环境变量设置
 export PYTHON_INCLUDE_PATH="$(python3 -c 'from sysconfig import get_paths; print(get_paths()["include"])')"
 export PYTHON_LIB_PATH="$(python3 -c 'from sysconfig import get_paths; print(get_paths()["include"])')"

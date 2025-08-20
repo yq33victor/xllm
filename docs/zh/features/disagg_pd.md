@@ -34,7 +34,7 @@ ENABLE_DECODE_RESPONSE_TO_SERVICE=true ./xllm_master_serving --etcd_addr="127.0.
 3. 启动xLLM
 - 以Qwen2-7B为例
     - 启动Prefill实例
-        ``` shell
+        ``` shell linenums="1" hl_lines="11"
         ./xllm --model=Qwen2-7B-Instruct \
                --port=8010 \
                --block_size=128 \
@@ -52,7 +52,7 @@ ENABLE_DECODE_RESPONSE_TO_SERVICE=true ./xllm_master_serving --etcd_addr="127.0.
                --nnodes=1
         ```
     - 启动Decode实例
-        ``` shell
+        ``` shell linenums="1" hl_lines="11"
         ./xllm --model=Qwen2-7B-Instruct \
                --port=8020 \
                --block_size=128 \
@@ -69,9 +69,10 @@ ENABLE_DECODE_RESPONSE_TO_SERVICE=true ./xllm_master_serving --etcd_addr="127.0.
                --node_rank=0 \
                --nnodes=1
         ```
-## 注意事项
-PD分离目前不支持开启prefix cache及chunked prefill功能，需要通过以下参数关闭
-``` shell
---enable_prefix_cache=false
---enable_chunked_prefill=false
-```
+
+!!! warning "注意事项"
+    PD分离目前不支持开启prefix cache及chunked prefill功能，需要通过以下参数关闭
+    ``` shell
+    --enable_prefix_cache=false
+    --enable_chunked_prefill=false
+    ```

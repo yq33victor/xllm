@@ -6,5 +6,3 @@ xLLM实现了支持continuous batching的调度策略，continuous_batch是一�
 ## 使用方式
 continuous batching的调度策略在xLLM提供了实现，如果不开其它调度策略，则默认使用continuous batching。
 
-## 注意事项
-无

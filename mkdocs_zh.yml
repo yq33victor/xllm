@@ -70,12 +70,18 @@ theme:
     code: Roboto Mono
   favicon: assets/logo.png
   logo: assets/logo.png
+  icon:
+    annotation: material/arrow-right-circle
   # icon:
   #   logo: logo
 # Plugins
 plugins:
   # - blog
   # - static-i18n
+  - git-revision-date-localized:
+      exclude:
+        - argparse/*
+        - examples/*
   - search:
       separator: '[\s\u200b\-_,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
   - minify:
@@ -133,9 +139,9 @@ markdown_extensions:
       smart_enable: all
   - pymdownx.caret
   - pymdownx.details
-  # - pymdownx.emoji:
-  #     emoji_generator: !!python/name:material.extensions.emoji.to_svg
-  #     emoji_index: !!python/name:material.extensions.emoji.twemoji
+  - pymdownx.emoji:
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
   - pymdownx.highlight:
       anchor_linenums: true
       line_spans: __span
@@ -166,12 +172,16 @@ markdown_extensions:
   - pymdownx.tasklist:
       custom_checkbox: true
   - pymdownx.tilde
+  - mdx_math:
+      enable_dollar_delimiter: true
+extra_javascript:
+  - mkdocs/javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
 nav:
   - 主页: zh/index.md
   - 开始使用:
     - zh/getting_started/compile.md
     - 快速开始:
-      - 离线服务: zh/getting_started/offline_service.md
       - 在线服务: 
         - zh/getting_started/single_node.md
         - zh/getting_started/multi_node.md
@@ -183,9 +193,13 @@ nav:
       - zh/features/overview.md
     - 功能列表:
       - 运行时:
-        - zh/features/async_runtime.md
+        - zh/features/async_schedule.md
+        - zh/features/multi_streams.md
       - 调度算法:
-        - zh/features/scheduler.md
+        - zh/features/continuous_scheduler.md
+        - zh/features/chunked_scheduler.md
+        - zh/features/zero_evict_scheduler.md
+        - zh/features/prefix_cache.md
       - 分布式:
         - zh/features/disagg_pd.md
       - 算子:

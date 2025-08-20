@@ -8,7 +8,8 @@
 ## 模态类型
 - 图片: 支持单图、多图的输入，以及图片+Prompt组合、纯文本Promot等输入方式。
 
-## 注意事项
-- 目前，xLLM统一基于JinJa渲染ChatTemplate，部署MiniCPM-V-2_6，模型目录需提供ChatTemplate文件。
-- 图片仅支持Base64输入， 不支持输入图片Url。
-- 目前多模态模型主要支持了图片模态，视频、音频等模态正在推进中。
+
+!!! warning "注意事项"
+    - 目前，xLLM统一基于JinJa渲染ChatTemplate，部署MiniCPM-V-2_6，模型目录需提供ChatTemplate文件。
+    - 图片仅支持Base64输入， 不支持输入图片Url。
+    - 目前多模态模型主要支持了图片模态，视频、音频等模态正在推进中。

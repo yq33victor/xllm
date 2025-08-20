@@ -22,15 +22,16 @@
 --enable_continuous_kvcache=true
 ```
 
-## 注意事项
-目前该方案暂不支持prefix cacheing，chunked prefill，disaggregated pd，speculative decoding，在使用时需要将这些功能关闭：
-```bash
---enable_prefix_cache=false
---enable_chunked_prefill=false
---enable_disagg_pd=false
---num_speculative_tokens=0
-```
+!!! warning "注意事项"
+    目前该方案暂不支持prefix cacheing，chunked prefill，disaggregated pd，speculative decoding，在使用时需要将这些功能关闭：
+    ```bash
+    --enable_prefix_cache=false
+    --enable_chunked_prefill=false
+    --enable_disagg_pd=false
+    --num_speculative_tokens=0
+    ```
 
-## 未来工作
-* 使用 VMM API 将 KVCache 和激活值统一管理，并动态管理二者使用的物理显存大小。
-* 使用 VMM API 实现当多个 LLM 模型共享 GPUs时，动态调整它们使用的 KVCache 的大小从而实现高效负载。
+!!! tip "未来计划"
+    * 使用 VMM API 将 KVCache 和激活值统一管理，并动态管理二者使用的物理显存大小。
+    * 使用 VMM API 实现当多个 LLM 模型共享 GPUs时，动态调整它们使用的 KVCache 的大小从而实现高效负载。
+

@@ -1,6 +1,6 @@
 # 单节点部署
 直接启动单节点的`xllm`服务：
-```bash
+```bash linenums="1"
 ./build/xllm/core/server/xllm \
     --model=/path/to/your/qwen2-7b  \
     --backend=llm \
@@ -10,7 +10,7 @@
 ## 客户端调用 {#客户端调用}
 ### Curl 调用
 chat模式：
-```bash
+```bash linenums="1"
 curl http://localhost:9977/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
@@ -31,7 +31,7 @@ curl http://localhost:9977/v1/chat/completions \
   }'
 ```
 completions模式：
-```bash
+```bash linenums="1"
 curl http://127.0.0.1:9977/v1/completions \
     -H "Content-Type: application/json" \
     -d '{
@@ -44,7 +44,7 @@ curl http://127.0.0.1:9977/v1/completions \
 ```
 
 ### Python调用
-```python
+```python linenums="1"
 import requests
 import json
 

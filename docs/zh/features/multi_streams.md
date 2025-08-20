@@ -18,10 +18,11 @@ xLLM中提供了gflags参数`enable_comp_comm_overlap`，默认false，如需开
 
 
 ## 性能效果
-prefill双流并行开启后，基本可掩盖75以上的通信开销，在DeepSeek-R1模型上，只输出1个token的情况下，
+prefill双流并行开启后，基本可掩盖75以上的通信开销，在DeepSeek-R1模型上，只输出1个token的情况下
+
 - TTFT下降 **7%**
 - 吞吐 **提升7%**
 
 
-## 注意事项
-双流并行目前只支持prefill阶段，请求输入越长，收益越大。
+!!! warning "注意"
+    双流并行目前只支持prefill阶段，请求输入越长，收益越大。

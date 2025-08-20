@@ -25,8 +25,8 @@ xLLM中提供了gflags参数`enable_schedule_overlap`，默认false，如需开�
 
 ## 性能效果
 - 异步调度开启后，两个step之间的device空闲时在200us左右，基本类似一个kernel launch的时间。
-- 在DeepSeek-R1-Distill-Qwen-1.5B模型上，限制TPOT 50ms，吞吐**提升17%**。
+- 在DeepSeek-R1-Distill-Qwen-1.5B模型上，限制TPOT 50ms，吞吐 **提升17%**。
 
 
-## 注意事项
-- 异步调度功能会在服务端额外计算一个step，当使用场景中输出token数量较少，或是类似embedding模型只一次性输出的场景，不建议开启，会影响服务端吞吐。
+!!! warning "注意"
+    - 异步调度功能会在服务端额外计算一个step，当使用场景中输出token数量较少，或是类似embedding模型只一次性输出的场景，不建议开启，会影响服务端吞吐。
