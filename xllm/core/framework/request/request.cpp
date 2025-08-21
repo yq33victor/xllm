@@ -59,7 +59,7 @@ void Request::log_statistic(double total_latency) {
               << "x-request-time: " << x_request_time_ << ", "
               << "request_id: " << request_id_ << ", "
               << "sequence " << idx++ << ", "
-              << "max_tokens: "
+              << "max_tokens:    "
               << seq->stopping_checker()->get_max_generated_tokens() << ", "
               << "temperature: " << seq->sampling_param()->temperature << ", "
               << "finish_reason: "
