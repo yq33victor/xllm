@@ -20,7 +20,10 @@ std::shared_ptr<Request> DisaggDecodeServiceImpl::generate_request(
                                  req.prompt_tokens().end());
 
   RequestSamplingParam sampling_param;
-  sampling_param.frequency_penalty = req.frequency_penalty();
+
+
+
+    sampling_param.frequency_penalty = req.frequency_penalty();
   sampling_param.presence_penalty = req.presence_penalty();
   sampling_param.repetition_penalty = req.repetition_penalty();
   sampling_param.temperature = req.temperature();
