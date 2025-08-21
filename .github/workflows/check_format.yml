@@ -78,6 +78,7 @@ jobs:
 
           # run clang-format
           diff=$(git-clang-format \
+            --style=file:.clang-format \
             --extensions="c,h,cc,cp,cpp,c++,cxx,hh,hpp,hxx,inc,cu,cuh" \
             --commit "$BASE_COMMIT" \
             --diff \
