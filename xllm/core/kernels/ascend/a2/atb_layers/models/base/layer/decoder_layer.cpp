@@ -88,8 +88,12 @@ template <typename NormType>
 void DecoderLayer<NormType>::SetDefaultInternalTensorCandidates()
 {
     if (this->param.isAttnSkipLayer) {
+              
         this->internalTensorCandidates = {{"default", {"intermediate_mlp_out"}}};
     } else if (this->param.isMlpSkipLayer) {
+               
+        
+        
         this->internalTensorCandidates = {{"default", {"intermediate_attn_out"}}};
     } else {
         this->internalTensorCandidates = {{"default", {"intermediate_attn_out"}}};

@@ -116,10 +116,11 @@ RequestOutput Request::generate_output(const Tokenizer& tokenizer) {
 
   RequestOutput output;
   output.request_id = request_id_;
-  output.service_request_id = service_request_id_;
+       output.service_request_id = service_request_id_;
   output.usage = usage;
   output.status = Status(StatusCode::OK);
-  output.finished = finished();
+
+        output.finished = finished();
   output.cancelled = cancelled();
   sequences_group_->generate_outputs(output.outputs, tokenizer);
 
