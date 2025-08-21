@@ -36,7 +36,7 @@ void replace_token(torch::Tensor& dst, torch::Tensor& src) {
   aclTensor* dst_ids = nullptr;
   aclTensor* src_ids = nullptr;
   int32_t device_id = dst.device().index();
-  aclrtStream stream = c10_npu::getCurrentNPUStream(device_id).stream();
+        aclrtStream stream = c10_npu::getCurrentNPUStream(device_id).stream();
   xllm_ops_utils::create_acltensor(&dst_ids, dst);
   xllm_ops_utils::create_acltensor(&src_ids, src);
   uint64_t workspace_size = 0;

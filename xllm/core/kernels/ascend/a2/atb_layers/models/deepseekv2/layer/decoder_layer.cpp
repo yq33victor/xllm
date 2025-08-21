@@ -44,7 +44,7 @@ DECLARE_bool(enable_atb_comm_multiprocess);
              "in_final_state",
              "in_cos_table", "in_sin_table", "in_attention_mask", "in_k_cache", "in_k_rope_cache", "in_seq_len",
              "in_place_holder", "in_token_offset", "in_layer_id", "in_block_tables", "in_slots", "in_q_len"};
-     deepseekV2LayerInTensorCandidates["default_weight"] = {
+            deepseekV2LayerInTensorCandidates["default_weight"] = {
              "in_input_norm_weight", "in_input_norm_bias", "in_input_norm_new_weight", "in_input_norm_new_bias",
              "in_q_proj_a_weight", "in_q_proj_a_bias", "in_q_proj_a_descale", "in_q_proj_a_offset", "in_q_proj_a_scale",
              "in_q_proj_a_compress_idx", "in_q_proj_a_layernorm_weight", "in_q_proj_a_layernorm_bias",
@@ -78,7 +78,7 @@ DECLARE_bool(enable_atb_comm_multiprocess);
  
  std::map<std::string, std::vector<std::string>> GetDeepseekV2LayerInTensorCandidates()
  {
-     std::map<std::string, std::vector<std::string>> deepseekV2LayerInTensorCandidates = {
+               std::map<std::string, std::vector<std::string>> deepseekV2LayerInTensorCandidates = {
          {"fa3_quant", {
              "in_q_quant_scale", "in_k_quant_scale", "in_qk_descale",
              "kv_offset", "fa3_v_quant_scale"}},
