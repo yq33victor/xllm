@@ -29,7 +29,7 @@ limitations under the License. -->
 **xLLM** 是一个高效且易用的开源智能推理框架，为模型在国产芯片上的推理提供企业级服务保障与高性能引擎计算能力。
 
 #### 背景
-当前，百亿至万亿参数规模的大语言模型正快速部署于智能客服、实时推荐、内容生成等核心业务场景，对国产计算硬件的高效支持已成为低成本推理部署的核心需求。现有推理引擎难以有效适配国产芯片等专用加速器的架构特性，硬件计算单元利用率低、MoE 架构下的负载不均衡与通信开销瓶颈、kv 缓存管理困难等问题，制约了请求的高效推理与系统的可扩展性。xLLM 推理引擎提升了 “通信 - 计算 - 存储” 全链路的资源利用效率，目前已支撑京东多场景、多模型的线上服务。
+当前，百亿至万亿参数规模的大语言模型正快速部署于智能客服、实时推荐、内容生成等核心业务场景，对国产计算硬件的高效支持已成为低成本推理部署的核心需求。现有推理引擎难以有效适配国产芯片等专用加速器的架构特性，硬件计算单元利用率低、MoE 架构下的负载不均衡与通信开销瓶颈、kv 缓存管理困难等问题，制约了请求的高效推理与系统的可扩展性。xLLM 推理引擎提升了 “通信 - 计算 - 存储” 全链路的资源利用效率，为大语言模型在实际业务中的规模化落地提供了关键技术支撑。
 
 --- 
 
@@ -192,7 +192,6 @@ python setup.py bdist_wheel
 ## 7. 致谢
 本项目的实现得益于以下开源项目: 
 - [ScaleLLM](https://github.com/vectorch-ai/ScaleLLM) - 采用了ScaleLLM中构图方式和借鉴Runtime执行。
-- [MindIE](https://www.hiascend.com/en/software/mindie) - 采用了MindIE中的算子优化、ATB。
 - [Mooncake](https://github.com/kvcache-ai/Mooncake) - 依赖构建了多级KV Cache管理机制。
 - [brpc](https://github.com/apache/brpc) - 依赖brpc构建了高性能http service。
 - [tokenizers-cpp](https://github.com/mlc-ai/tokenizers-cpp) - 依赖tokenizers-cpp构建了c++ tokenizer。

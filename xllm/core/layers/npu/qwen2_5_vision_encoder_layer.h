@@ -21,7 +21,7 @@
 #include "core/framework/model/model_input_params.h"
 #include "core/framework/parallel_state.h"
 #include "core/framework/state_dict/state_dict.h"
-#include "core/kernels/ascend/a2/atb_layers/models/qwen2_5/vision_encoder/encoder_layer.h"
+#include "core/kernels/npu/a2/atb_layers/models/qwen2_5/vision_encoder/encoder_layer.h"
 #include "nlohmann/json.hpp"
 #include "pytorch/adapter/utils/utils.h"
 

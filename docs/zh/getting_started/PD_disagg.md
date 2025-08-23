@@ -64,13 +64,11 @@ export PYTHON_LIB_PATH="$(python3 -c 'from sysconfig import get_paths; print(get
 export PYTORCH_NPU_INSTALL_PATH=/usr/local/libtorch_npu/  # NPU 版 PyTorch 路径
 export PYTORCH_INSTALL_PATH="$(python3 -c 'import torch, os; print(os.path.dirname(os.path.abspath(torch.__file__)))')"  # PyTorch 安装路径
 export LIBTORCH_ROOT="$(python3 -c 'import torch, os; print(os.path.dirname(os.path.abspath(torch.__file__)))')"  # LibTorch 路径
-source /usr/local/Ascend/ascend-toolkit/set_env.sh  # Ascend Toolkit 环境变量
-source /usr/local/Ascend/nnal/atb/set_env.sh  # ATB（Ascend Tensor Boost）环境变量
+source /usr/local/Ascend/ascend-toolkit/set_env.sh
+source /usr/local/Ascend/nnal/atb/set_env.sh
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/libtorch_npu/lib  # 添加 NPU LibTorch 库路径
 
 # 清理日志和临时文件
-\rm -rf /root/atb/log/
-\rm -rf /root/ascend/log/
 \rm -rf core.*
 \rm -rf ~/dynamic_profiling_socket_*
 

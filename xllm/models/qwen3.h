@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/layers/ascend/qwen3_decoder_layer.h"
+#include "core/layers/npu/qwen3_decoder_layer.h"
 #include "qwen_base.h"
 
 namespace xllm::hf {

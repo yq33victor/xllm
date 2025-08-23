@@ -33,5 +33,5 @@ cc_library(
     torch
 )
 
-add_subdirectory(ascend)
+add_subdirectory(npu)
 

@@ -15,9 +15,9 @@ set(BASE_DEPS
   torch
 )
 
-# Modify dependencies for Ascend
+# Modify dependencies for NPU
 list(APPEND BASE_DEPS torch_npu)
-list(APPEND BASE_DEPS :ascend_layers)
+list(APPEND BASE_DEPS :npu_layers)
 
 # Define the library
 cc_library(

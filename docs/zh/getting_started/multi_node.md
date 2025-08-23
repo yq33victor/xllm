@@ -13,25 +13,22 @@ export PYTORCH_INSTALL_PATH="$(python3 -c 'import torch, os; print(os.path.dirna
 export LIBTORCH_ROOT="$PYTORCH_INSTALL_PATH"  # LibTorch 路径
 export LD_LIBRARY_PATH=/usr/local/libtorch_npu/lib:$LD_LIBRARY_PATH  # 添加 NPU 库路径
 
-# 2. 加载 Ascend 环境
-source /usr/local/Ascend/ascend-toolkit/set_env.sh  # 加载 CANN 工具链
-source /usr/local/Ascend/nnal/atb/set_env.sh       # 加载 ATB 加速库
-export ASCEND_RT_VISIBLE_DEVICES=10,11             # 指定可见 NPU 设备（物理卡 10 和 11）
-export ASDOPS_LOG_TO_STDOUT=1   # 将 ASDOPS 的日志输出到标准输出（终端）
-export ASDOPS_LOG_LEVEL=ERROR   # 设置 ASDOPS 的日志级别，仅输出指定级别及以上的日志
-export ASDOPS_LOG_TO_FILE=1     # 将 ASDOPS 的日志写入默认路径
-# export HCCL_BUFFSIZE=1024
-export PYTORCH_NPU_ALLOC_CONF=expandable_segments:True  # 允许显存动态扩展
-export NPU_MEMORY_FRACTION=0.98                    # 显存利用率上限 98%
-export ATB_WORKSPACE_MEM_ALLOC_ALG_TYPE=3          # ATB 内存分配算法
-export ATB_WORKSPACE_MEM_ALLOC_GLOBAL=1            # 全局内存分配
-export OMP_NUM_THREADS=12   # OpenMP 线程数（建议与 CPU 核数匹配）
-export HCCL_CONNECT_TIMEOUT=7200    # HCCL 连接超时（2 小时）
+# 2. 加载环境
+source /usr/local/Ascend/ascend-toolkit/set_env.sh 
+source /usr/local/Ascend/nnal/atb/set_env.sh
+export ASCEND_RT_VISIBLE_DEVICES=10,11
+export ASDOPS_LOG_TO_STDOUT=1
+export ASDOPS_LOG_LEVEL=ERROR
+export ASDOPS_LOG_TO_FILE=1
+export PYTORCH_NPU_ALLOC_CONF=expandable_segments:True
+export NPU_MEMORY_FRACTION=0.98
+export ATB_WORKSPACE_MEM_ALLOC_ALG_TYPE=3
+export ATB_WORKSPACE_MEM_ALLOC_GLOBAL=1
+export OMP_NUM_THREADS=12
+export HCCL_CONNECT_TIMEOUT=7200
 export INF_NAN_MODE_ENABLE=0
 
 # 3. 清理旧日志
-\rm -rf /root/atb/log/
-\rm -rf /root/ascend/log/
 \rm -rf core.*
 
 # 4. 启动分布式服务

@@ -20,7 +20,7 @@
 #include "atb_layers/operations/fusion/lmhead/lmhead.h"
 #include "framework/context.h"
 #include "framework/model/model_input_params.h"
-#include "layers/ascend/llm_head.h"
+#include "layers/npu/llm_head.h"
 #include "nlohmann/json.hpp"
 #include "pytorch/adapter/utils/utils.h"
 

@@ -70,9 +70,9 @@ HcclDataType to_hccl_data_type(const torch::Tensor& input) {
   }
 }
 void check_input(torch::Tensor input) {
-  CHECK(is_npu(input)) << "input should be ascend tensor";
+  CHECK(is_npu(input)) << "input should be npu tensor";
   CHECK(input.is_contiguous()) << "input should be contiguous";
-  CHECK(!input.is_sparse()) << "input have to be ascend dense tensor";
+  CHECK(!input.is_sparse()) << "input have to be npu dense tensor";
 }
 }  // namespace
 
@@ -154,7 +154,7 @@ std::vector<std::unique_ptr<ProcessGroup>> ProcessGroup::create_process_groups(
     const std::vector<torch::Device>& devices) {
   CHECK(!devices.empty()) << "devices should not be empty";
   for (const auto& device : devices) {
-    CHECK(is_npu(device)) << "device should be ascend device";
+    CHECK(is_npu(device)) << "device should be npu device";
   }
   std::vector<int> device_idxs;
   device_idxs.reserve(devices.size());

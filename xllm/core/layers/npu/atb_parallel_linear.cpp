@@ -1,4 +1,4 @@
-#include "layers/ascend/atb_parallel_linear.h"
+#include "layers/npu/atb_parallel_linear.h"
 
 #include "framework/parallel_state.h"
 

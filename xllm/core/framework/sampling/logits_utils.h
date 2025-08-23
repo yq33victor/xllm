@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 
-#include "kernels/ascend/xllm_ops/top_k_top_p.h"
+#include "kernels/npu/xllm_ops/top_k_top_p.h"
 
 namespace xllm {
 

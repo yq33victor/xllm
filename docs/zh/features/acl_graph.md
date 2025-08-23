@@ -3,7 +3,7 @@
 
 ## 功能介绍
 
-为了优化Host侧调度性能，Ascend近期推出了类似CUDA Graph的图模式方案ACLGraph。与采用CPU密集小任务提交、NPU频繁启动小Kernel的传统模式相比，ACLGraph模式通过在CPU一次提交大任务后，NPU内部流式执行小kernel，显著降低了启动时间和NPU气泡。
+为了优化Host侧调度性能，NPU近期推出了类似CUDA Graph的图模式方案ACLGraph。与采用CPU密集小任务提交、NPU频繁启动小Kernel的传统模式相比，ACLGraph模式通过在CPU一次提交大任务后，NPU内部流式执行小kernel，显著降低了启动时间和NPU气泡。
 
 在xLLM引擎中使用ACLGraph功能，我们实现了以下特性：
 ### 动态维度参数化

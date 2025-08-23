@@ -4,7 +4,7 @@ include(cc_test)
 
 cc_library(
   NAME
-    ascend_layers 
+    npu_layers 
   HDRS
     llama_decoder_layer.h
     qwen2_decoder_layer.h

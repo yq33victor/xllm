@@ -2,7 +2,7 @@
 
 ## **Major Features and Improvements**
 
-- Support CANN operators of the RC1 version.
+- Support NPU operators of the RC1 version.
 - Support disaggregated prefill and decoding.
 - Support large-scale EP parallelism.
 - Support Hash-based PrefixCache matching.
@@ -15,7 +15,7 @@
 
 ## **Major Features and Improvements**
 
-- Support CANN operators of the T9 version to enhance the performance of MLA and MOE operators.
+- Support NPU operators of the T9 version to enhance the performance of MLA and MOE operators.
 - Support asynchronous scheduling, allowing the scheduling and computational pipeline to execute in parallel.
 - Support multiple nodes on NPU.
 
@@ -37,6 +37,6 @@
 - Add MoE triton ops in GPU.
 - Add FlashMLA and flashinfer for MLA ops.
 - Add MoE and MLA's NPU ops.
-- Support EP, DP, TP model parallel. (EP and DP only support on Ascend T6 package.)
+- Support EP, DP, TP model parallel. (EP and DP only support on NPU T6 package.)
 - Support multiple process and multiple nodes.
 - Support for BRPC-based request http services.

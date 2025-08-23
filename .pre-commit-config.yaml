@@ -7,5 +7,5 @@ repos:
     hooks:
       - id: clang-format
         types_or: [c++, c, cuda]
-        exclude: ^(xllm/core/kernels/ascend/|cibuild/|tools/|third_party/|cmake/|build/|.*\.ptx\.h$)
+        exclude: ^(cibuild/|tools/|third_party/|cmake/|build/|.*\.ptx\.h$)
 

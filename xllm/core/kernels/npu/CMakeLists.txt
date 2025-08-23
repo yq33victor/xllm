@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.26)
 project(xLLM)
 
 include_directories(
-    ${CMAKE_SOURCE_DIR}/xllm/core/kernels/ascend
+    ${CMAKE_SOURCE_DIR}/xllm/core/kernels/npu
     ${CMAKE_SOURCE_DIR}/third_party/
     ${CMAKE_SOURCE_DIR}/third_party/spdlog/include
     $ENV{ATB_HOME_PATH}/include

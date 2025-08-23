@@ -9,8 +9,8 @@
 #include <vector>
 
 #include "atb_layers/core/include/atb_speed/log.h"
-#include "core/layers/ascend/attn_mask.h"
-#include "core/layers/ascend/rms_norm.h"
+#include "core/layers/npu/attn_mask.h"
+#include "core/layers/npu/rms_norm.h"
 // test
 #include <mstx/ms_tools_ext.h>
 
@@ -18,8 +18,8 @@
 #include "core/framework/context.h"
 #include "core/framework/kv_cache/kv_cache.h"
 #include "core/framework/model/model_input_params.h"
-#include "core/layers/ascend/llm_head.h"
-#include "core/layers/ascend/pos_embedding.h"
+#include "core/layers/npu/llm_head.h"
+#include "core/layers/npu/pos_embedding.h"
 #include "model_registry.h"
 
 namespace xllm::hf {

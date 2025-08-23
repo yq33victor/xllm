@@ -19,7 +19,7 @@
 #include "atb_layers/core/include/atb_speed/utils/model_factory.h"
 #include "atb_layers/operations/fusion/embedding/word_embedding.h"
 #include "framework/model/model_input_params.h"
-#include "layers/ascend/word_embedding.h"
+#include "layers/npu/word_embedding.h"
 #include "nlohmann/json.hpp"
 #include "pytorch/adapter/utils/utils.h"
 

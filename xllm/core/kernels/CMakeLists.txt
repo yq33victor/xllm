@@ -1,3 +1,3 @@
 include(cc_library)
-add_subdirectory(ascend)
+add_subdirectory(npu)
 

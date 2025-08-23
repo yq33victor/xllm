@@ -165,7 +165,7 @@ bool HFModelLoader::load_quant_args(const std::string& model_weights_path) {
     }
   }
 
-  // load quantization args for ascend(npu) if exists
+  // load quantization args for npu if exists
   if (reader.contains("quantize")) {
     quant_args_.quantize_type() = reader.value_or<std::string>("quantize", "");
   }

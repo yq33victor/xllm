@@ -26,7 +26,7 @@
 #include "framework/parallel_state.h"
 #include "framework/sampling/sampler.h"
 #include "framework/state_dict/state_dict.h"
-#include "kernels/ascend/xllm_ops/replace_token.h"
+#include "kernels/npu/xllm_ops/replace_token.h"
 #include "pytorch/adapter/utils/utils.h"
 #include "util/tensor_helper.h"
 #include "util/threadpool.h"

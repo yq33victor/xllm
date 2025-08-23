@@ -405,9 +405,9 @@ class Timeline(object):
           device_pid = self._alloc_pid()
           self._device_pids[deviceId] = device_pid
           if deviceId < 50:
-            self._chrome_trace.emit_pid('Ascend CPU Process ' + str(deviceId), device_pid)
+            self._chrome_trace.emit_pid('CPU Process ' + str(deviceId), device_pid)
           else:
-            self._chrome_trace.emit_pid('Ascend NPU Device ' + str(deviceId), device_pid)
+            self._chrome_trace.emit_pid('NPU Device ' + str(deviceId), device_pid)
       elif dev_stats['AscendKind'] == "MEMORY":
         if deviceId not in self._memory_pids:
           device_pid = self._alloc_pid()

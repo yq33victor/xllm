@@ -4,7 +4,7 @@
 
 #include "core/framework/context.h"
 #include "core/framework/model/npu_dp_ep_padding.h"
-#include "core/layers/ascend/qwen3_moe_decoder_layer.h"
+#include "core/layers/npu/qwen3_moe_decoder_layer.h"
 #include "qwen_base.h"
 
 namespace xllm::hf {

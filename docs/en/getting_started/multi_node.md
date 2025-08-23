@@ -15,25 +15,22 @@ export PYTORCH_INSTALL_PATH="$(python3 -c 'import torch, os; print(os.path.dirna
 export LIBTORCH_ROOT="$PYTORCH_INSTALL_PATH"  # LibTorch path
 export LD_LIBRARY_PATH=/usr/local/libtorch_npu/lib:$LD_LIBRARY_PATH  # Add NPU library path
 
-# 2. Load Ascend environment
-source /usr/local/Ascend/ascend-toolkit/set_env.sh  # Load CANN toolchain
-source /usr/local/Ascend/nnal/atb/set_env.sh       # Load ATB acceleration library
-export ASCEND_RT_VISIBLE_DEVICES=10,11             # Specify visible NPU devices (physical cards 10 and 11)
-export ASDOPS_LOG_TO_STDOUT=1   # Output ASDOPS logs to standard output (terminal)
-export ASDOPS_LOG_LEVEL=ERROR   # Set ASDOPS log level, only output logs of specified level and above
-export ASDOPS_LOG_TO_FILE=1     # Write ASDOPS logs to default path
-# export HCCL_BUFFSIZE=1024
-export PYTORCH_NPU_ALLOC_CONF=expandable_segments:True  # Allow dynamic expansion of video memory
-export NPU_MEMORY_FRACTION=0.98                    # Video memory utilization upper limit 98%
-export ATB_WORKSPACE_MEM_ALLOC_ALG_TYPE=3          # ATB memory allocation algorithm
-export ATB_WORKSPACE_MEM_ALLOC_GLOBAL=1            # Global memory allocation
-export OMP_NUM_THREADS=12   # OpenMP thread count (recommended to match CPU core count)
-export HCCL_CONNECT_TIMEOUT=7200    # HCCL connection timeout (2 hours)
+# 2. Load npu environment
+source /usr/local/Ascend/ascend-toolkit/set_env.sh 
+source /usr/local/Ascend/nnal/atb/set_env.sh 
+export ASCEND_RT_VISIBLE_DEVICES=10,11
+export ASDOPS_LOG_TO_STDOUT=1
+export ASDOPS_LOG_LEVEL=ERROR
+export ASDOPS_LOG_TO_FILE=1
+export PYTORCH_NPU_ALLOC_CONF=expandable_segments:True
+export NPU_MEMORY_FRACTION=0.98
+export ATB_WORKSPACE_MEM_ALLOC_ALG_TYPE=3
+export ATB_WORKSPACE_MEM_ALLOC_GLOBAL=1
+export OMP_NUM_THREADS=12
+export HCCL_CONNECT_TIMEOUT=7200
 export INF_NAN_MODE_ENABLE=0
 
 # 3. Clean up old logs
-\rm -rf /root/atb/log/
-\rm -rf /root/ascend/log/
 \rm -rf core.*
 
 # 4. Start distributed service

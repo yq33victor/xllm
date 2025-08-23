@@ -47,7 +47,7 @@ cc_library(
     :common
     :request
     :state_dict
-    :ascend_layers
+    :npu_layers
     :model
     :models
     :sampler
@@ -84,7 +84,7 @@ cc_library(
     :runtime
     :model
     :models
-    :ascend_layers
+    :npu_layers
     :chat_template
     glog::glog
 )

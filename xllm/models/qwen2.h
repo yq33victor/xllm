@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/layers/ascend/qwen2_decoder_layer.h"
+#include "core/layers/npu/qwen2_decoder_layer.h"
 #include "qwen_base.h"
 
 // QWen2 model compatible with huggingface weights

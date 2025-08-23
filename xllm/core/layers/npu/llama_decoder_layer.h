@@ -23,7 +23,6 @@
 #include "framework/state_dict/state_dict.h"
 #include "nlohmann/json.hpp"
 #include "pytorch/adapter/utils/utils.h"
-// #include "layers/ascend/qwen2_decoder_layer.h"
 
 namespace xllm::hf {
 

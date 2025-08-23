@@ -10,8 +10,6 @@ on:
       - 'docs/**'
       - 'third_party/**'
       - 'tools/**'
-      - 'xllm/core/kernels/ascend/a2/**'
-      - 'xllm/core/kernels/ascend/a3/**'
   pull_request:
     types: [opened, synchronize, reopened]
     branches: [main]
@@ -22,8 +20,6 @@ on:
       - 'docs/**'
       - 'third_party/**'
       - 'tools/**'
-      - 'xllm/core/kernels/ascend/a2/**'
-      - 'xllm/core/kernels/ascend/a3/**'
 
 jobs:
   format-check:
@@ -75,8 +71,6 @@ jobs:
             "^docs/.*"
             "^third_party/.*"
             "^tools/.*"
-            "^xllm/core/kernels/ascend/a2/.*"
-            "^xllm/core/kernels/ascend/a3/.*"
           )
 
           # igonore files

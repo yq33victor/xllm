@@ -78,8 +78,8 @@ export PYTHON_LIB_PATH="$(python3 -c 'from sysconfig import get_paths; print(get
 export PYTORCH_NPU_INSTALL_PATH=/usr/local/libtorch_npu/  # NPU version PyTorch path
 export PYTORCH_INSTALL_PATH="$(python3 -c 'import torch, os; print(os.path.dirname(os.path.abspath(torch.__file__)))')"  # PyTorch installation path
 export LIBTORCH_ROOT="$(python3 -c 'import torch, os; print(os.path.dirname(os.path.abspath(torch.__file__)))')"  # LibTorch path
-source /usr/local/Ascend/ascend-toolkit/set_env.sh  # Ascend Toolkit environment variables
-source /usr/local/Ascend/nnal/atb/set_env.sh  # ATB (Ascend Tensor Boost) environment variables
+source /usr/local/Ascend/ascend-toolkit/set_env.sh
+source /usr/local/Ascend/nnal/atb/set_env.sh
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/libtorch_npu/lib  # Add NPU LibTorch library path
 
 # Clean up logs and temporary files

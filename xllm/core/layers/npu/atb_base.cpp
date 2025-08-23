@@ -178,7 +178,7 @@ atb::Status ATBBase::execute_node(atb_speed::Model::Node& node,
     std::stringstream ss;
     ss << "execute fail, enable log: export ASDOPS_LOG_LEVEL=ERROR, export "
           "ASDOPS_LOG_TO_STDOUT=1 to find the "
-          "first error.  For more details, see the MindIE official document. "
+          "first error.  For more details, see the npu official document. "
        << std::endl;
     throw std::runtime_error(ss.str());
   }

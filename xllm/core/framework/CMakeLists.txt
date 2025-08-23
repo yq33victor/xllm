@@ -54,7 +54,7 @@ cc_library(
     :common
     :model
     :models
-    :ascend_layers
+    :npu_layers
     :tokenizer
     torch
 )

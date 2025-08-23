@@ -265,12 +265,6 @@ include_directories(
     $ENV{ASCEND_HOME_PATH}/include
     $ENV{ATB_HOME_PATH}/include
     $ENV{ASCEND_HOME_PATH}/opp/vendors/xllm/op_api/include/
-    $<$<BOOL:${USE_A3}>:${CMAKE_SOURCE_DIR}/xllm/core/kernels/ascend/a3/atb_layers/core/include>
-    $<$<BOOL:${USE_A3}>:${CMAKE_SOURCE_DIR}/xllm/core/kernels/ascend/a3/atb_layers/>
-    $<$<BOOL:${USE_A3}>:${CMAKE_SOURCE_DIR}/xllm/core/kernels/ascend/a3/>
-    $<$<BOOL:${USE_A2}>:${CMAKE_SOURCE_DIR}/xllm/core/kernels/ascend/a2/atb_layers/core/include>
-    $<$<BOOL:${USE_A2}>:${CMAKE_SOURCE_DIR}/xllm/core/kernels/ascend/a2/atb_layers/>
-    $<$<BOOL:${USE_A2}>:${CMAKE_SOURCE_DIR}/xllm/core/kernels/ascend/a2/>
 )
 
 link_directories(

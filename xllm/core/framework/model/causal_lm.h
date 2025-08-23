@@ -10,8 +10,8 @@
 #include "core/framework/parallel_state.h"
 #include "core/framework/quant_args.h"
 #include "core/framework/state_dict/state_dict.h"
-#include "layers/ascend/llm_head.h"
-#include "layers/ascend/word_embedding.h"
+#include "layers/npu/llm_head.h"
+#include "layers/npu/word_embedding.h"
 #include "model_args.h"
 #include "model_input_params.h"
 

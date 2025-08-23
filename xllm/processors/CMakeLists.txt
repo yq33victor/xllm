@@ -13,12 +13,12 @@ set(BASE_DEPS
   torch
 )
 
-# Check if Ascend is being used
+# Check if NPU is being used
 include_directories(${CMAKE_SOURCE_DIR}/src/kernels/ascend/core/include)
 include_directories(${CMAKE_SOURCE_DIR}/src/kernels/ascend)
-# Modify dependencies for Ascend
+# Modify dependencies for NPU
 list(APPEND BASE_DEPS torch_npu)
-list(APPEND BASE_DEPS :ascend_layers)
+list(APPEND BASE_DEPS :npu_layers)
 
 # Define the library
 cc_library(
