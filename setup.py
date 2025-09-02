@@ -428,7 +428,20 @@ def apply_patch():
         os.system("cd third_party/Mooncake && git apply ../custom_patch/Mooncake.patch")
         os.system("cd third_party/cpprestsdk && git apply ../custom_patch/cpprestsdk.patch")
 
+def update_submodule():
+    # git submodule init && update
+    ret_code = os.system("git submodule init")
+    if ret_code != 0:
+        raise RuntimeError("git submodule init failed")
+    ret_code = os.system("git submodule update")
+    if ret_code != 0:
+        raise RuntimeError("git submodule update failed")
+    ret_code = os.system("cd third_party/Mooncake/ && git submodule init && git submodule update")
+    if ret_code != 0:
+        raise RuntimeError("cd third_party/Mooncake/ && git submodule init && git submodule update failed")
+
 if __name__ == "__main__":
+    update_submodule()
     apply_patch()
     device = 'a2'  # default
     arch = "x86" # default
