@@ -24,7 +24,7 @@ limitations under the License.
 #include "block_manager.h"
 
 namespace xllm {
-Block::Block(int32_t id, BlockManager* manager)
+Block::Block(int32_t id, std::shared_ptr<BlockManager> manager)
     : id_(id), ref_count_(new uint32_t(1)), manager_(manager) {
   // get the block size from the manager
   size_ = manager_ == nullptr ? 0 : manager_->block_size();

@@ -75,10 +75,10 @@ class NonStreamCall : public Call {
   ::google::protobuf::Closure* done() { return done_; }
 
  private:
-  ::google::protobuf::Closure* done_;
+  ::google::protobuf::Closure* done_; // not owned
 
-  Request* request_;
-  Response* response_;
+  Request* request_; // not owned, will be deleted when brpc resp is deleted
+  Response* response_; // not owned, will be deleted when brpc resp is deleted
 
   json2pb::Pb2JsonOptions json_options_;
 };

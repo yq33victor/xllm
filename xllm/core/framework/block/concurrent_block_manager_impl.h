@@ -19,7 +19,8 @@ limitations under the License.
 
 namespace xllm {
 
-class ConcurrentBlockManagerImpl : public BlockManagerImpl {
+class ConcurrentBlockManagerImpl : public std::enable_shared_from_this<ConcurrentBlockManagerImpl>,
+                                  public BlockManagerImpl {
  public:
   explicit ConcurrentBlockManagerImpl(const Options& options);
   virtual ~ConcurrentBlockManagerImpl() = default;

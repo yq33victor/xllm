@@ -21,7 +21,8 @@ limitations under the License.
 
 namespace xllm {
 
-class BlockManagerImpl : public BlockManager {
+class BlockManagerImpl : public std::enable_shared_from_this<BlockManagerImpl>,
+                        public BlockManager {
  public:
   explicit BlockManagerImpl(const Options& options);
   virtual ~BlockManagerImpl() {

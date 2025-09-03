@@ -53,7 +53,7 @@ std::vector<Block> BlockManagerImpl::allocate(size_t num_blocks) {
   blocks.reserve(num_blocks);
   for (uint32_t i = 0; i < num_blocks; ++i) {
     const int32_t block_id = free_blocks_[--num_free_blocks_];
-    blocks.emplace_back(block_id, this);
+    blocks.emplace_back(block_id, shared_from_this());
   }
 
   // const auto block_ids = allocate(num_blocks);

@@ -90,7 +90,7 @@ class Block final {
   uint32_t* ref_count_ = nullptr;
 
   // manager that manages this block
-  BlockManager* manager_ = nullptr;
+  std::shared_ptr<BlockManager> manager_ = nullptr;
 
   uint8_t hash_value_[MURMUR_HASH3_VALUE_LEN];
 

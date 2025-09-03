@@ -175,7 +175,7 @@ int run() {
   std::vector<std::string> model_versions = {model_version};
 
   auto api_service =
-      std::make_unique<APIService>(master.get(), model_names, model_versions);
+      std::make_unique<APIService>(master, model_names, model_versions);
   auto xllm_server =
       ServerRegistry::get_instance().register_server("HttpServer");
 

@@ -15,6 +15,7 @@ limitations under the License.
 
 #pragma once
 
+#include <memory>
 #include "chat_service_impl.h"
 #include "completion_service_impl.h"
 #include "embedding_service_impl.h"
@@ -25,7 +26,7 @@ namespace xllm {
 
 class APIService : public proto::XllmAPIService {
  public:
-  APIService(Master* master,
+  APIService(std::unique_ptr<Master> master,
              const std::vector<std::string>& model_names,
              const std::vector<std::string>& model_versions);
   ~APIService() = default;
@@ -91,7 +92,7 @@ class APIService : public proto::XllmAPIService {
                          ::google::protobuf::Closure* done) override;
 
  private:
-  Master* master_;
+  std::unique_ptr<Master> master_;
 
   std::unique_ptr<CompletionServiceImpl> completion_service_impl_;
   std::unique_ptr<ChatServiceImpl> chat_service_impl_;

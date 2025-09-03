@@ -20,8 +20,10 @@ namespace xllm {
 std::vector<Batch> BatchFactory::create_batches(
     const std::vector<Sequence*>& running_sequences,
     const std::vector<size_t>& running_sequences_budgets,
-    std::vector<std::vector<CacheBlockInfo>>* copy_in_cache_block_infos,
-    std::vector<std::vector<CacheBlockInfo>>* copy_out_cache_block_infos) {
+    std::shared_ptr<std::vector<std::vector<CacheBlockInfo>>>
+        copy_in_cache_block_infos,
+    std::shared_ptr<std::vector<std::vector<CacheBlockInfo>>>
+        copy_out_cache_block_infos) {
   size_t num_prompt_tokens = 0;
   size_t num_generated_tokens = 0;
   std::vector<Batch> batches(dp_size_);

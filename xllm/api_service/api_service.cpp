@@ -33,12 +33,12 @@ limitations under the License.
 #include "xllm_metrics.h"
 namespace xllm {
 
-APIService::APIService(Master* master,
+APIService::APIService(std::unique_ptr<Master> master,
                        const std::vector<std::string>& model_names,
                        const std::vector<std::string>& model_versions)
-    : master_(master) {
+    : master_(std::move(master)) {
   if (FLAGS_backend == "llm") {
-    auto llm_master = dynamic_cast<LLMMaster*>(master);
+    auto llm_master = dynamic_cast<LLMMaster*>(master_.get());
     completion_service_impl_ =
         ServiceImplFactory<CompletionServiceImpl>::create_service_impl(
             llm_master, model_names);
@@ -49,7 +49,7 @@ APIService::APIService(Master* master,
         ServiceImplFactory<EmbeddingServiceImpl>::create_service_impl(
             llm_master, model_names);
   } else if (FLAGS_backend == "vlm") {
-    auto vlm_master = dynamic_cast<VLMMaster*>(master);
+    auto vlm_master = dynamic_cast<VLMMaster*>(master_.get());
     mm_chat_service_impl_ =
         std::make_unique<MMChatServiceImpl>(vlm_master, model_names);
   }
