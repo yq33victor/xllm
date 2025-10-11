@@ -7,7 +7,6 @@ cc_library(
     block
   HDRS
     block.h
-    block_manager.h
     block_manager_pool.h
     block_manager_impl.h
     concurrent_block_manager_impl.h

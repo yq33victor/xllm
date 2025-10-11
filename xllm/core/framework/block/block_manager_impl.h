@@ -16,12 +16,21 @@ limitations under the License.
 
 #pragma once
 
-#include "block_manager.h"
 #include "framework/kv_cache/kv_cache_event.h"
 
 namespace xllm {
 
-class BlockManagerImpl : public BlockManager {
+namespace BlockManager {
+struct Options {
+  PROPERTY(uint32_t, num_blocks) = 0;
+  PROPERTY(int32_t, block_size) = 0;
+  PROPERTY(bool, enable_prefix_cache) = true;
+  PROPERTY(bool, enable_disagg_pd) = false;
+  PROPERTY(bool, enable_cache_upload) = false;
+};
+} // namespace BlockManager
+
+class BlockManagerImpl {
  public:
   explicit BlockManagerImpl(const Options& options);
   virtual ~BlockManagerImpl() {
@@ -31,22 +40,22 @@ class BlockManagerImpl : public BlockManager {
 
   // Try to allocate blocks with num_blocks,
   // return {} if not enough blocks
-  std::vector<Block> allocate(size_t num_blocks) override;
+  std::vector<Block> allocate(size_t num_blocks);
 
-  void deallocate(const Slice<Block>& blocks) override;
+  void deallocate(const Slice<Block>& blocks);
 
   // allocate shared blocks when enable prefix cache
   std::vector<Block> allocate_shared(
       const Slice<int32_t>& tokens_ids,
-      const Slice<Block>& existed_shared_blocks = {}) override;
+      const Slice<Block>& existed_shared_blocks = {});
 
   // cache blocks when enable prefix cache
   void cache(const Slice<int32_t>& token_ids,
-             std::vector<Block>& blocks) override;
+             std::vector<Block>& blocks);
 
-  void get_merged_kvcache_event(KvCacheEvent* event) const override;
+  void get_merged_kvcache_event(KvCacheEvent* event) const;
 
-  size_t num_blocks_in_prefix_cache() const override {
+  size_t num_blocks_in_prefix_cache() const {
     if (options_.enable_prefix_cache()) {
       CHECK(prefix_cache_);
       return prefix_cache_->num_blocks();
@@ -55,10 +64,10 @@ class BlockManagerImpl : public BlockManager {
   }
 
   // free blocks num
-  size_t num_free_blocks() const override { return num_free_blocks_; }
+  size_t num_free_blocks() const { return num_free_blocks_; }
 
   // used blocks num
-  size_t num_used_blocks() const override {
+  size_t num_used_blocks() const {
     if (options_.enable_prefix_cache()) {
       return num_used_blocks_;
     } else {
@@ -67,7 +76,7 @@ class BlockManagerImpl : public BlockManager {
   }
 
   // current kv cache utilization.
-  double kv_cache_utilization() const override {
+  double kv_cache_utilization() const {
     if (options_.enable_prefix_cache()) {
       return static_cast<double>(num_used_blocks_) / num_total_blocks();
     } else {
@@ -75,21 +84,27 @@ class BlockManagerImpl : public BlockManager {
     }
   }
 
-  float get_gpu_cache_usage_perc() const override {
+  float get_gpu_cache_usage_perc() const {
     return 1.0 - num_free_blocks_ * 1.0 / num_total_blocks();
   }
 
   // call BlockManager to free block used by Block.
-  void free(int32_t block_id) override;
+  void free(int32_t block_id);
 
   // allocate a list of blocks
-  // std::vector<Block> allocate(uint32_t n_blocks) override;
+  // std::vector<Block> allocate(uint32_t n_blocks);
 
   // allocate a block
-  Block allocate() override;
+  Block allocate();
 
   // total blocks num
-  size_t num_total_blocks() const override { return free_blocks_.size() - 1; }
+  size_t num_total_blocks() const { return free_blocks_.size() - 1; }
+
+  // get the options for the block manager
+  const Options& options() const { return options_; }
+
+  // get number of slots per block
+  size_t block_size() const { return options_.block_size(); }
 
  private:
   // check if has enough slots, if not, try to evict some blocks
@@ -97,6 +112,9 @@ class BlockManagerImpl : public BlockManager {
   bool has_enough_blocks(uint32_t num_blocks);
 
  private:
+  // the options for the block manager
+  Options options_;
+
   // prefix cache
   std::unique_ptr<PrefixCache> prefix_cache_;
 
