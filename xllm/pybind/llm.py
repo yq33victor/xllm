@@ -26,7 +26,7 @@ class LLM:
         expert_parallel_degree: int = 0,
         enable_mla: bool = False,
         disable_chunked_prefill: bool = False,
-        master_node_addr: str = '',
+        master_node_addr: str = '127.0.0.1:9988',
         instance_role: str = 'DEFAULT',
         device_ip: str = '',
         transfer_listen_port: int = 26000,
@@ -72,7 +72,6 @@ class LLM:
         else:
             options.enable_chunked_prefill = True
         options.master_node_addr = master_node_addr
-        options.instance_role = instance_role
         options.device_ip = device_ip
         options.transfer_listen_port = transfer_listen_port
         options.nnodes = nnodes
@@ -82,7 +81,7 @@ class LLM:
         options.xservice_addr = xservice_addr
         options.instance_name = instance_name
         options.enable_disagg_pd = enable_disagg_pd
-        options.enable_schedule_overlap = enable_schedule_overlap
+        options.enable_schedule_overlap = False
         options.kv_cache_transfer_mode = kv_cache_transfer_mode
         self.master = LLMMaster(options)
 
@@ -116,11 +115,15 @@ class LLM:
         # generate
         self.master.generate()
 
-        for index, output in enumerate(outputs):
-            if output is None:
-                raise RuntimeError("Generate failed, no outputs return.")
-            if output.status is not None and not output.status.ok:
-                raise ValidationError(output.status.code, output.status.message)
-            output.prompt = prompts[index]
+        count = len(prompts)
+        idx = 0
+        for idx in range(count):
+            # wait async output
+            if outputs[idx] is None:
+                idx -= 1
+                continue
+            if outputs[idx].status is not None and not outputs[idx].status.ok:
+                raise ValidationError(outputs[idx].status.code, outputs[idx].status.message)
+            outputs[idx].prompt = prompts[idx]
 
         return outputs
