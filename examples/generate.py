@@ -1,7 +1,5 @@
 # python examples/generate.py --model='/path/models/Qwen2-7B-Instruct' --devices='npu:0' 
 
-import os
-import signal
 from xllm import ArgumentParser, LLM, RequestParams
 
 # Create an LLM.
@@ -31,9 +29,5 @@ for i, output in enumerate(outputs):
     generated_text = output.outputs[0].text
     print(f"Prompt: {prompt!r}, Generated text: {generated_text!r}")
 
-try:
-  #os.kill(os.getpid(), signal.SIGTERM)
-  os.kill(os.getpid(), signal.SIGKILL)
-except Exception as e:
-  pass
+llm.finish()
 
