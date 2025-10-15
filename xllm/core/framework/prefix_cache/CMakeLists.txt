@@ -46,18 +46,18 @@ if(USE_NPU)
   add_dependencies(prefix_test brpc-static)
 endif()
 
-cc_binary(
-  NAME
-    prefix_cache_benchmark
-  SRCS
-    prefix_cache_benchmark.cpp
-  DEPS
-    :kv_cache
-    :prefix_cache
-    :block
-    benchmark::benchmark
-    benchmark::benchmark_main
-)
-
-target_link_libraries(prefix_cache_benchmark PRIVATE brpc OpenSSL::SSL OpenSSL::Crypto)
-add_dependencies(prefix_cache_benchmark brpc-static)
+#cc_binary(
+#  NAME
+#    prefix_cache_benchmark
+#  SRCS
+#    prefix_cache_benchmark.cpp
+#  DEPS
+#    :kv_cache
+#    :prefix_cache
+#    :block
+#    benchmark::benchmark
+#    benchmark::benchmark_main
+#)
+#
+#target_link_libraries(prefix_cache_benchmark PRIVATE brpc OpenSSL::SSL OpenSSL::Crypto)
+#add_dependencies(prefix_cache_benchmark brpc-static)

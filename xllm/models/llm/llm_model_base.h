@@ -189,6 +189,9 @@ class LlmModelImplBase : public torch::nn::Module {
     std::vector<ModelInputParams>& input_params_news =
         const_cast<std::vector<ModelInputParams>&>(input_params);
 
+    LOG(ERROR) << "====================> LlmModelImplBase forward - 1: "
+                  "micro_batch_num = "
+               << micro_batch_num;
     for (auto i = 0; i < micro_batch_num; ++i) {
       if (tokens[i].numel() == 0) {
         tokens[i] = torch::tensor({1}).to(torch::kInt32).to(tokens[0].device());
@@ -198,6 +201,7 @@ class LlmModelImplBase : public torch::nn::Module {
       auto inputs_embeds = input_params[i].input_embedding;
       // test
       torch::Tensor h;
+      LOG(ERROR) << "====================> LlmModelImplBase forward - 1 - 2";
       if (inputs_embeds.defined()) {
         h = inputs_embeds;
       } else {
@@ -207,6 +211,7 @@ class LlmModelImplBase : public torch::nn::Module {
         h = embed_tokens_[i](tokens[i]);
 #endif
       }
+      LOG(ERROR) << "====================> LlmModelImplBase forward - 1 - 3";
       hs.push_back(std::move(h));
 #if defined(USE_NPU)
       auto target_cos_sin = atb_pos_embeds_[i](cos_sin_, positions[i], 0);

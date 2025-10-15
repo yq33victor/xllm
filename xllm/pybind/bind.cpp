@@ -72,7 +72,10 @@ PYBIND11_MODULE(xllm_export, m) {
       .def_readwrite("kv_cache_transfer_mode",
                      &Options::kv_cache_transfer_mode_)
       .def_readwrite("device_ip", &Options::device_ip_)
-      .def_readwrite("transfer_listen_port", &Options::transfer_listen_port_);
+      .def_readwrite("transfer_listen_port", &Options::transfer_listen_port_)
+      .def_readwrite("enable_offline_inference",
+                     &Options::enable_offline_inference_)
+      .def_readwrite("spawn_worker_path", &Options::spawn_worker_path_);
 
   // 2. export LLMMaster
   py::class_<LLMMaster>(m, "LLMMaster")

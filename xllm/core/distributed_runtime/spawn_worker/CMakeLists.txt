@@ -1,0 +1,20 @@
+include(cc_binary)
+
+cc_binary(
+  NAME 
+    spawn_worker
+  HDRS
+  SRCS
+    spawn_process_worker_server.cpp
+  DEPS
+    :models
+    :model
+    :distributed_runtime
+    absl::strings
+    xllm_kernels
+    ascendcl
+    nnopbase
+    atb
+    c_sec
+    spdlog::spdlog
+)
