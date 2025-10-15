@@ -1,5 +1,7 @@
 include(cc_library)
 
+add_subdirectory(spawn_worker)
+
 if(USE_NPU)
   include_directories(
     ${CMAKE_SOURCE_DIR}/third_party/spdlog/include

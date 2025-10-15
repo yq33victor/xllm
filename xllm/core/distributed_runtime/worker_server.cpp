@@ -26,6 +26,7 @@ limitations under the License.
 #include <memory>
 #include <optional>
 #include <utility>
+#include <fstream>
 
 #include "common/global_flags.h"
 #include "common/metrics.h"
@@ -47,6 +48,7 @@ limitations under the License.
 #endif
 
 namespace xllm {
+extern char** environ;
 
 void WorkerServer::create_server(const runtime::Options& options,
                                  std::atomic<bool>& done,
@@ -109,26 +111,87 @@ void WorkerServer::create_server(const runtime::Options& options,
   worker_server->run();
 }
 
+void WorkerServer::create_spawn_server(int local_rank,
+                                       const std::string& master_node_addr,
+                                       std::atomic<bool>& done,
+                                       const ParallelArgs& parallel_args,
+                                       const torch::Device& d,
+                                       const runtime::Options& options) {
+  done.store(true);
+
+  auto local_rank_str0 = std::to_string(local_rank);
+  const char* local_rank_str = local_rank_str0.c_str();
+  auto global_rank_str0 = std::to_string(parallel_args.rank());
+  const char* global_rank_str = global_rank_str0.c_str();
+  auto world_size_str0 = std::to_string(parallel_args.world_size());
+  const char* world_size_str = world_size_str0.c_str();
+  auto device_idx_str0 = std::to_string(d.index());
+  const char* device_idx_str = device_idx_str0.c_str();
+  auto num_decoding_tokens_str0 = std::to_string(options.num_decoding_tokens());
+  const char* num_decoding_tokens_str = num_decoding_tokens_str0.c_str();
+  auto block_size_str0 = std::to_string(options.block_size());
+  const char* block_size_str = block_size_str0.c_str();
+  std::string spawn_worker_bin_path = options.spawn_worker_path() + "/spawn_worker";
+  LOG(INFO) << "Spawn worker path: " << spawn_worker_bin_path;
+  const char* argv[] = {spawn_worker_bin_path.c_str(),
+                        //notify_file_name.c_str(),
+                        master_node_addr.c_str(),
+                        local_rank_str,
+                        global_rank_str,
+                        world_size_str,
+                        device_idx_str,
+                        num_decoding_tokens_str,
+                        block_size_str,
+                        nullptr};
+  pid_t pid;
+  posix_spawn_file_actions_init(&file_actions_);
+  posix_spawnattr_init(&spawn_attr_);
+  int status = posix_spawnp(
+      &pid,
+      argv[0],
+      &file_actions_,
+      &spawn_attr_,
+      const_cast<char**>(argv),
+      environ
+  );
+  if (status != 0) {
+    LOG(ERROR) << "posix_spawnp failed: " << strerror(status);
+    return;
+  }
+  use_spwan_worker_ = true;
+}
+
 WorkerServer::WorkerServer(int local_worker_idx,
                            const std::string& master_node_addr,
                            std::atomic<bool>& done,
                            const ParallelArgs& parallel_args,
                            const torch::Device& d,
                            const runtime::Options& options,
-                           WorkerType worker_type) {
+                           WorkerType worker_type,
+                           bool use_spawn_worker) {
   if (worker_type == WorkerType::LLM || worker_type == WorkerType::ELM) {
-    // TODO: Use Process or thread.
-    worker_thread_ = std::make_unique<std::thread>(&WorkerServer::create_server,
-                                                   this,
-                                                   std::cref(options),
-                                                   std::ref(done),
-                                                   std::cref(master_node_addr),
-                                                   std::cref(d),
-                                                   parallel_args.world_size(),
-                                                   parallel_args.rank(),
-                                                   parallel_args.dp_size(),
-                                                   local_worker_idx,
-                                                   parallel_args.ep_size());
+    if(use_spawn_worker) {
+      // start worker in a spawn process
+      create_spawn_server(local_worker_idx,
+                          master_node_addr,
+                          done,
+                          parallel_args,
+                          d,
+                          options);
+    } else {
+      // start worker in a thread.
+      worker_thread_ = std::make_unique<std::thread>(&WorkerServer::create_server,
+                                                     this,
+                                                     std::cref(options),
+                                                     std::ref(done),
+                                                     std::cref(master_node_addr),
+                                                     std::cref(d),
+                                                     parallel_args.world_size(),
+                                                     parallel_args.rank(),
+                                                     parallel_args.dp_size(),
+                                                     local_worker_idx,
+                                                     parallel_args.ep_size());
+    }
   } else {
     // TODO: support other model type later.
     LOG(ERROR) << "Unsupported model type: " << worker_type;
@@ -183,6 +246,11 @@ bool WorkerServer::sync_master_node(const std::string& master_node_addr,
 WorkerServer::~WorkerServer() {
   if (worker_thread_->joinable()) {
     worker_thread_->join();
+  }
+  
+  if (use_spwan_worker_) {
+    posix_spawn_file_actions_destroy(&file_actions_);
+    posix_spawnattr_destroy(&spawn_attr_);
   }
 }
 
