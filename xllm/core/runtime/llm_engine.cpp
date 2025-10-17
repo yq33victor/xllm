@@ -602,6 +602,7 @@ ForwardOutput LLMEngine::step(std::vector<Batch>& batch) {
       << "Split DP batch failed with dp_size as " << dp_size_
       << " and actual batch size as " << batch.size() << ".";
 
+  LOG(ERROR) << "========================> LLMEngine::step - 0";
   // prepare input with DP and multi-stream parallel, 2-D micro batches
   // batched_raw_forward_inputs[dp_size][micro_batch_size]
   // currently we use two batch overlap(TBO), each micro_batch_size is 2.
@@ -611,6 +612,7 @@ ForwardOutput LLMEngine::step(std::vector<Batch>& batch) {
       << batched_raw_forward_inputs.size() << " is not equal to dp size "
       << dp_size_ << ".";
 
+  LOG(ERROR) << "========================> LLMEngine::step - 1";
   std::vector<folly::SemiFuture<std::optional<RawForwardOutput>>> futures;
   futures.reserve(worker_clients_num_);
 
@@ -621,9 +623,11 @@ ForwardOutput LLMEngine::step(std::vector<Batch>& batch) {
         batched_raw_forward_inputs[dp_rank]));
   }
 
+  LOG(ERROR) << "========================> LLMEngine::step - 2";
   // wait for the all future to complete
   auto results = folly::collectAll(futures).get();
 
+  LOG(ERROR) << "========================> LLMEngine::step - 3";
   if (FLAGS_enable_eplb && !options_.enable_schedule_overlap()) {
     process_eplb_data(results);
   }
@@ -644,6 +648,7 @@ ForwardOutput LLMEngine::step(std::vector<Batch>& batch) {
     }
     ++dp_rank;
   }
+  LOG(ERROR) << "========================> LLMEngine::step - 4";
 
   COUNTER_ADD(engine_latency_seconds, timer.elapsed_seconds());
   return {};

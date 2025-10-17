@@ -1,10 +1,10 @@
 import os
 import signal
+from . import util
 from typing import List, Optional, Union
 
 from xllm_export import (LLMMaster, Options, RequestOutput,
                          RequestParams)
-
 class LLM:
     def __init__(
         self,
@@ -17,9 +17,9 @@ class LLM:
         max_cache_size: int = 0,
         max_memory_utilization: float = 0.9,
         disable_prefix_cache: bool = False,
-        max_tokens_per_batch: int = 20000,
+        max_tokens_per_batch: int = 20480,
         max_seqs_per_batch: int = 256,
-        max_tokens_per_chunk_for_prefill: int = 512,
+        max_tokens_per_chunk_for_prefill: int = -1,
         num_speculative_tokens: int = 0,
         num_handling_threads: int = 4,
         communication_backend: str = 'lccl',
@@ -27,7 +27,6 @@ class LLM:
         expert_parallel_degree: int = 0,
         enable_mla: bool = False,
         disable_chunked_prefill: bool = False,
-        master_node_addr: str = '127.0.0.1:9988',
         instance_role: str = 'DEFAULT',
         device_ip: str = '',
         transfer_listen_port: int = 26000,
@@ -72,7 +71,9 @@ class LLM:
             options.enable_chunked_prefill = False
         else:
             options.enable_chunked_prefill = True
-        options.master_node_addr = master_node_addr
+        free_port = util.get_free_port()
+        options.master_node_addr = "127.0.0.1:" + str(free_port)
+        print("========================> options.master_node_addr = ", options.master_node_addr)
         options.device_ip = device_ip
         options.transfer_listen_port = transfer_listen_port
         options.nnodes = nnodes
@@ -84,6 +85,9 @@ class LLM:
         options.enable_disagg_pd = enable_disagg_pd
         options.enable_schedule_overlap = False
         options.kv_cache_transfer_mode = kv_cache_transfer_mode
+        options.enable_offline_inference = True
+        options.spawn_worker_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+        print("=====================> options.spawn_worker_path = ", options.spawn_worker_path)
         self.master = LLMMaster(options)
 
     def finish(self):

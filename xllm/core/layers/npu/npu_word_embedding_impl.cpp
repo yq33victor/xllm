@@ -15,6 +15,7 @@ limitations under the License.
 
 #include "npu_word_embedding_impl.h"
 
+#include <absl/strings/str_join.h>
 #include <gflags/gflags.h>
 #include <glog/logging.h>
 // DECLARE_string(rank_tablefile);
@@ -48,6 +49,10 @@ NpuWordEmbeddingImpl::NpuWordEmbeddingImpl(const ModelContext& context)
   auto model_args = context.get_model_args();
   auto parallel_args = context.get_parallel_args();
   auto options = context.get_tensor_options();
+
+  LOG(ERROR) << "==================> options.dtype = " << options.dtype()
+             << ", parallel_args.rank = " << parallel_args.rank()
+             << ", parallel_args.world_size = " << parallel_args.world_size();
 
   param_from_args(embedding_param_, model_args, parallel_args);
   at_weight_tensors_.resize(1);
@@ -116,6 +121,11 @@ torch::Tensor NpuWordEmbeddingImpl::forward(const torch::Tensor& x,
                                             int nodeId) {
   atb::Status st;
   // std::cout<<"x:"<<x<<std::endl;
+  LOG(ERROR)
+      << "========================> NpuWordEmbeddingImpl::forward: x shape = "
+      << absl::StrJoin(x.sizes(), ", ", [](std::string* out, int n) {
+           out->append(std::to_string(n));
+         });
   build_node_variant_pack(embedding_node_, x);
   st = execute_node(embedding_node_, nodeId);
   LOG_IF(FATAL, st != 0) << modelName_

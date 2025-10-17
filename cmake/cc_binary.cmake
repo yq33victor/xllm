@@ -39,6 +39,7 @@ function(cc_binary)
     ${ARGN}
   )
 
+  add_dependencies(export_module ${CC_BINARY_NAME})
   add_executable(${CC_BINARY_NAME} "")
   target_sources(${CC_BINARY_NAME} 
     PRIVATE ${CC_BINARY_SRCS} ${CC_BINARY_HDRS}

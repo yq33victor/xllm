@@ -264,8 +264,10 @@ void LLMMaster::generate() {
     return;
   }
 
+  LOG(ERROR) << "======================> LLMMaster::generate - 0";
   running_.store(true, std::memory_order_relaxed);
   scheduler_->generate();
+  LOG(ERROR) << "======================> LLMMaster::generate - 1";
   running_.store(false, std::memory_order_relaxed);
 }
 

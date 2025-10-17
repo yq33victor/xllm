@@ -73,6 +73,7 @@ std::optional<ForwardOutput> LLMWorkerImpl::step(
 
   std::vector<folly::SemiFuture<bool>> futures;
 
+  LOG(ERROR) << "===========================> LLMWorkerImpl::step - 0";
   for (auto i = 0; i < inputs.micro_inputs.size(); ++i) {
     flatten_tokens_micro_batches.push_back(
         std::move(inputs.micro_inputs[i].token_ids));
@@ -102,6 +103,7 @@ std::optional<ForwardOutput> LLMWorkerImpl::step(
   if (FLAGS_enable_eplb) {
     eplb_executor_->eplb_execute(inputs.micro_inputs[0].eplb_info);
   }
+  LOG(ERROR) << "===========================> LLMWorkerImpl::step - 1";
 
   // temporarily use [0], will be adapted in next pr
   // call model executor forward to get hidden states
@@ -110,12 +112,14 @@ std::optional<ForwardOutput> LLMWorkerImpl::step(
                                                 kv_caches_,
                                                 input_params_micro_batches);
 
+  LOG(ERROR) << "===========================> LLMWorkerImpl::step - 2";
   torch::Tensor logits;
   if (concated_sampling_params.selected_token_idxes.defined()) {
     logits = model_->logits(hidden_states,
                             concated_sampling_params.selected_token_idxes);
   }
 
+  LOG(ERROR) << "===========================> LLMWorkerImpl::step - 3";
   ForwardOutput output;
   if (FLAGS_enable_eplb) {
     output.expert_load_data = expert_load_data_;
@@ -125,6 +129,7 @@ std::optional<ForwardOutput> LLMWorkerImpl::step(
     }
   }
 
+  LOG(ERROR) << "===========================> LLMWorkerImpl::step - 4";
   if (!enable_schedule_overlap() && !driver_ && !dp_driver_ &&
       !options_.enable_speculative_decode()) {
     auto ret = device_.synchronize_default_stream();

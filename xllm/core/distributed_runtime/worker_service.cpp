@@ -317,6 +317,8 @@ void WorkerService::ExecuteModel(
     const proto::BatchedForwardInputs* pb_batched_fwd_inputs,
     proto::ForwardOutput* pb_forward_output,
     ::google::protobuf::Closure* done) {
+  LOG(ERROR)
+      << "=================================> WorkerService::ExecuteModel - 0";
   threadpool_.schedule([this,
                         controller,
                         pb_batched_fwd_inputs,
@@ -326,6 +328,10 @@ void WorkerService::ExecuteModel(
     device_.set_device();
     Timer timer;
 
+    LOG(ERROR)
+        << "=================================> WorkerService::ExecuteModel - "
+           "2: options_.num_decoding_tokens = "
+        << options_.num_decoding_tokens();
     // convert proto::BatchedForwardInputs to BatchedForwardInputs
     auto micro_batches_num = pb_batched_fwd_inputs->micro_inputs().size();
     BatchedForwardInputs batched_fwd_inputs;
@@ -345,6 +351,8 @@ void WorkerService::ExecuteModel(
       batched_fwd_inputs.concated_sampling_params.concat(
           batched_fwd_inputs.micro_inputs[i].sampling_params);
     }
+    LOG(ERROR)
+        << "=================================> WorkerService::ExecuteModel - 3";
 
     // model output
     torch::Tensor next_tokens;
@@ -358,16 +366,26 @@ void WorkerService::ExecuteModel(
     // execute model
     auto future = worker_->step_async(batched_fwd_inputs);
 
+    LOG(ERROR)
+        << "=================================> WorkerService::ExecuteModel - 4";
     if (!options_.enable_schedule_overlap()) {
+      LOG(ERROR) << "=================================> "
+                    "WorkerService::ExecuteModel - 5";
       auto forward_outputs = std::move(future).get();
+      LOG(ERROR) << "=================================> "
+                    "WorkerService::ExecuteModel - 5 - 1";
       // convert ForwardOutput to proto::ForwardOutput which contain Tokens.
       if (forward_outputs) {
+        LOG(ERROR) << "=================================> "
+                      "WorkerService::ExecuteModel - 5 - 2";
         DCHECK(forward_outputs.has_value()) << "Failed to execute model";
         const auto& sample_output = forward_outputs.value().sample_output;
         expert_load_data = safe_to(
             forward_outputs.value().expert_load_data, torch::kCPU, true);
         prepared_layer_id = forward_outputs.value().prepared_layer_id;
 
+        LOG(ERROR) << "=================================> "
+                      "WorkerService::ExecuteModel - 5 - 3";
         {
           c10::StreamGuard streamGuard = stream_->set_stream_guard();
           // only driver worker (rank=0) need to fill this
@@ -377,6 +395,8 @@ void WorkerService::ExecuteModel(
                       torch::dtype(torch::kFloat32).device(torch::kCPU),
                       true);
 
+          LOG(ERROR) << "=================================> "
+                        "WorkerService::ExecuteModel - 5 - 4";
           // [num_seq]
           next_tokens = safe_to(sample_output.next_tokens, torch::kCPU, true);
           if (next_tokens.defined()) {
@@ -388,8 +408,12 @@ void WorkerService::ExecuteModel(
             top_logprobs =
                 safe_to(sample_output.top_logprobs, torch::kCPU, true);
           }
+          LOG(ERROR) << "=================================> "
+                        "WorkerService::ExecuteModel - 5 - 5";
           auto ret = stream_->synchronize();
         }
+        LOG(ERROR) << "=================================> "
+                      "WorkerService::ExecuteModel - 6";
       }
     } else {
       if (worker_->is_driver()) {
@@ -411,6 +435,8 @@ void WorkerService::ExecuteModel(
       }
       expert_load_data = torch::zeros({1, 1}).to(torch::kInt64).contiguous();
     }
+    LOG(ERROR)
+        << "=================================> WorkerService::ExecuteModel - 7";
 
     forward_output_to_proto(next_tokens,
                             logprobs,

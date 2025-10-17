@@ -128,6 +128,11 @@ void DistManager::setup_multi_node_workers(
 
   runtime::Options worker_server_options = options;
   worker_server_options.world_size(world_size);
+  LOG(ERROR) << "============================> rnutime: "
+                "options.enable_offline_inference = "
+             << options.enable_offline_inference()
+             << ", options.spawn_worker_path = " << options.spawn_worker_path()
+             << ", devices.size = " << devices.size();
 
   WorkerType worker_type =
       (options.task_type() == "generate") ? WorkerType::LLM : WorkerType::ELM;
@@ -140,9 +145,11 @@ void DistManager::setup_multi_node_workers(
 
     // we use spawn process worker to launch a xllm instance
     // when start a offline inference task with multi-gpu/npu/mpu/...
-    bool use_spawn_worker =
-        options.enable_offline_inference() && i > 0;
+    bool use_spawn_worker = options.enable_offline_inference() && i > 0;
     ParallelArgs parallel_args(rank, world_size, dp_size, nullptr, ep_size);
+    LOG(ERROR)
+        << "==========================> create make_unique<WorkerServer>: "
+        << i;
     servers_.emplace_back(std::make_unique<WorkerServer>(i,
                                                          master_node_addr,
                                                          // done,
@@ -154,6 +161,7 @@ void DistManager::setup_multi_node_workers(
                                                          use_spawn_worker));
   }
 
+  LOG(ERROR) << "================================> dist manager: 0";
   // Master node need to wait all workers done
   if (options.node_rank() == 0) {
     // if dp_size equals 1, use global process group directly
@@ -165,6 +173,7 @@ void DistManager::setup_multi_node_workers(
     std::shared_ptr<CollectiveService> collective_service =
         std::make_shared<CollectiveService>(
             dp_local_process_group_num, world_size, devices[0].index());
+    LOG(ERROR) << "================================> dist manager: 1";
     XllmServer* collective_server =
         ServerRegistry::get_instance().register_server("CollectiveServer");
     if (!collective_server->start(collective_service, master_node_addr)) {
@@ -172,9 +181,11 @@ void DistManager::setup_multi_node_workers(
                  << master_node_addr;
       return;
     }
+    LOG(ERROR) << "================================> dist manager: 2";
 
     auto worker_addrs_map = collective_service->wait();
 
+    LOG(ERROR) << "================================> dist manager: 3";
     // check if all workers connected
     // and then create worker clients
     for (size_t r = 0; r < world_size; ++r) {
@@ -186,12 +197,17 @@ void DistManager::setup_multi_node_workers(
       worker_clients_.emplace_back(std::make_unique<RemoteWorker>(
           r, worker_addrs_map[r], devices[r % each_node_ranks]));
     }
+    LOG(ERROR) << "================================> dist manager: 4";
   }
 
+  LOG(ERROR) << "================================> dist manager: 5";
   for (int idx = 0; idx < dones.size(); ++idx) {
     while (!dones[idx].load()) {
       std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
   }
+
+  // std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+  LOG(ERROR) << "================================> dist manager: 6";
 }
 }  // namespace xllm

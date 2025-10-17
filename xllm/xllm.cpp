@@ -166,8 +166,7 @@ int run() {
       .max_global_ttft_ms(FLAGS_max_global_ttft_ms)
       .max_global_tpot_ms(FLAGS_max_global_tpot_ms)
       .max_requests_per_batch(FLAGS_max_requests_per_batch)
-      .enable_continuous_kvcache(FLAGS_enable_continuous_kvcache)
-      .enable_offline_inference(FLAGS_enable_offline_inference);
+      .enable_continuous_kvcache(FLAGS_enable_continuous_kvcache);
 
   InstanceName::name()->set_name(options.instance_name().value_or(""));
 

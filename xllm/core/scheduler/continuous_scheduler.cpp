@@ -614,6 +614,8 @@ std::vector<Batch> ContinuousScheduler::prepare_batch() {
   // Include those requests that are preempted by others.
   std::shared_ptr<Request> request;
   // read from request queue then push to waiting priority queue
+  LOG(ERROR)
+      << "==========================> ContinuousScheduler::prepare_batch - 0";
   while (request_queue_.read(request)) {
     CHECK(request);
 
@@ -653,6 +655,8 @@ std::vector<Batch> ContinuousScheduler::prepare_batch() {
     }
   }
 
+  LOG(ERROR)
+      << "==========================> ContinuousScheduler::prepare_batch - 1";
   if (options_.priority_strategy() == "FCFS") {
     if (last_step_prefill_) {
       // insert all requests to the back of running_queue_
@@ -714,6 +718,8 @@ std::vector<Batch> ContinuousScheduler::prepare_batch() {
     }
   }
 
+  LOG(ERROR)
+      << "==========================> ContinuousScheduler::prepare_batch - 2";
   // clear previous batch
   last_step_prefill_ = false;
   running_requests_.clear();
@@ -750,6 +756,8 @@ std::vector<Batch> ContinuousScheduler::prepare_batch() {
                           num_online_prefill_preempt_offline_requests,
                           finished_requests);
 
+  LOG(ERROR)
+      << "==========================> ContinuousScheduler::prepare_batch - 3";
   if (running_sequences_.empty()) {
     latency_budget = options_.max_global_tpot_ms();
     // Handle decoding requests.
@@ -781,6 +789,8 @@ std::vector<Batch> ContinuousScheduler::prepare_batch() {
     response_processor_->process_completed_requests(finished_requests);
   }
 
+  LOG(ERROR)
+      << "==========================> ContinuousScheduler::prepare_batch - 4";
   auto batches =
       BatchFactory::get_instance(options_.dp_size())
           ->create_batches(running_requests_,
@@ -795,6 +805,8 @@ std::vector<Batch> ContinuousScheduler::prepare_batch() {
     COUNTER_ADD(scheduling_latency_seconds, timer.elapsed_seconds());
   }
 
+  LOG(ERROR)
+      << "==========================> ContinuousScheduler::prepare_batch - 5";
   GAUGE_SET(num_pending_requests,
             pending_requests_.load(std::memory_order_relaxed));
   GAUGE_SET(num_running_requests, running_requests_.size());
@@ -821,6 +833,8 @@ std::vector<Batch> ContinuousScheduler::prepare_batch() {
     GAUGE_SET(num_free_blocks, util::max(kv_cache_manager_->num_free_blocks()));
     GAUGE_SET(num_used_blocks, util::min(kv_cache_manager_->num_used_blocks()));
   }
+  LOG(ERROR)
+      << "==========================> ContinuousScheduler::prepare_batch - 6";
   return batches;
 }
 
@@ -941,17 +955,28 @@ void ContinuousScheduler::step_with_schedule_overlap(
 
 void ContinuousScheduler::generate() {
   bool batch_empty = false;
-  while (num_pending_requests() > 0 || !batch_empty) {
+  while (num_pending_requests() > 0 || !batch_empty ||
+         request_queue_.size() > 0) {
     // build a batch of requests/sequences
     auto batch = prepare_batch();
+    sleep(2);
+    LOG(ERROR) << "=========================> ContinuousScheduler::generate: "
+                  "num_pending_requests() = "
+               << num_pending_requests()
+               << ", last batch_empty = " << batch_empty
+               << ", request_queue_.size = " << request_queue_.size();
     batch_empty = true;
     for (auto& b : batch) {
       batch_empty &= b.empty();
     }
+    LOG(ERROR) << "=========================> ContinuousScheduler::generate: "
+                  "current batch_empty = "
+               << batch_empty;
     if (batch_empty) {
       continue;
     }
 
+    LOG(ERROR) << "========================> start to step";
     // run inference for the batch
     engine_->step(batch);
     kv_cache_manager_->reset_copy_content();
@@ -959,9 +984,13 @@ void ContinuousScheduler::generate() {
     // process request output in batch
     process_batch_output(false);
   }
+  LOG(ERROR)
+      << "======================> ContinuousScheduler::generate - end - 0";
 
   // wait for all responses done
   response_processor_->wait_completion();
+  LOG(ERROR)
+      << "======================> ContinuousScheduler::generate - end - 1";
 }
 
 void ContinuousScheduler::update_token_latency_metrics(

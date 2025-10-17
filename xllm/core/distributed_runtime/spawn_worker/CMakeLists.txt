@@ -7,6 +7,14 @@ cc_binary(
   SRCS
     spawn_process_worker_server.cpp
   DEPS
+    :models
+    :model
     :distributed_runtime
     absl::strings
+    xllm_kernels
+    ascendcl
+    nnopbase
+    atb
+    c_sec
+    spdlog::spdlog
 )
