@@ -16,6 +16,7 @@ cc_library(
     qwen3_moe_decoder_layer.h
     linear_impl.h
     word_embedding_impl.h
+    multi_head_attention.h
   SRCS
     qwen3_attention.cpp
     attention.cpp
@@ -26,6 +27,7 @@ cc_library(
     qwen3_decoder_layer.cpp
     qwen3_moe_decoder_layer.cpp
     linear_impl.cpp
+    multi_head_attention.cpp
   DEPS
     "-Wl,--whole-archive"
     "-Wl,--no-whole-archive"

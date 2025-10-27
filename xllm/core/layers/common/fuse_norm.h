@@ -33,7 +33,7 @@ class FusedRMSNormImpl : public torch::nn::Module {
   void load_state_dict(const StateDict& state_dict);
 
  private:
-  torch::Tensor weight_;
+  DEFINE_WEIGHT(weight);
   int64_t norm_dim_;
   double eps_;
 };

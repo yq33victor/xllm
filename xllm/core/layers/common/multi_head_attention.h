@@ -42,15 +42,10 @@ class MultiheadAttentionImpl : public torch::nn::Module {
   int64_t hidden_size_;
   torch::TensorOptions options_;
 
-  torch::Tensor in_proj_weight_;
-  torch::Tensor in_proj_bias_;
-  torch::Tensor out_proj_weight_;
-  torch::Tensor out_proj_bias_;
-
-  bool is_in_proj_weight_loaded_;
-  bool is_in_proj_bias_loaded_;
-  bool is_out_proj_weight_loaded_;
-  bool is_out_proj_bias_loaded_;
+  DEFINE_WEIGHT(in_proj_weight);
+  DEFINE_WEIGHT(in_proj_bias);
+  DEFINE_WEIGHT(out_proj_weight);
+  DEFINE_WEIGHT(out_proj_bias);
 };
 
 TORCH_MODULE(MultiheadAttention);
