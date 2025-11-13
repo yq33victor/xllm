@@ -7,7 +7,8 @@ cc_library(
     flashinfer_workspace.h
     deepseek_v2_attention.h
     qwen3_attention.h
-    attention.h
+    $<$<BOOL:${USE_MLU}>mlu/attention.h>
+    $<$<BOOL:${USE_CUDA}>gpu/attention.h>
     fuse_norm.h
     rotary_embedding.h
     fused_moe.h
@@ -23,7 +24,8 @@ cc_library(
     flashinfer_workspace.cpp
     deepseek_v2_attention.cpp
     qwen3_attention.cpp
-    attention.cpp
+    $<$<BOOL:${USE_MLU}>mlu/attention.cpp>
+    $<$<BOOL:${USE_CUDA}>gpu/attention.cpp>
     fuse_norm.cpp
     rotary_embedding.cpp
     fused_moe.cpp
