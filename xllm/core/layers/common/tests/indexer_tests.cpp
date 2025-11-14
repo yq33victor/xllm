@@ -24,7 +24,9 @@ limitations under the License.
 #include "framework/parallel_state/parallel_state.h"
 #include "framework/quant_args.h"
 #include "framework/state_dict/state_dict.h"
-#include "layers/common/attention.h"
+#if defined(USE_MLU)
+#include "layers/common/mlu/attention.h"
+#endif
 #include "layers/common/indexer.h"
 #include "platform/device.h"
 #include "tests_utils.h"

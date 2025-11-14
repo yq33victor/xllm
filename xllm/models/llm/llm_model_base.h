@@ -38,8 +38,10 @@ limitations under the License.
 #include "models/model_registry.h"
 #if defined(USE_NPU)
 #include "xllm_kernels/core/include/atb_speed/log.h"
-#else
-#include "core/layers/common/attention.h"
+#elif defined(USE_CUDA)
+#include "core/layers/common/gpu/attention.h"
+#elif defined(USE_MLU)
+#include "core/layers/common/mlu/attention.h"
 #endif
 
 namespace xllm {

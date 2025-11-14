@@ -27,6 +27,8 @@ void FlashinferWorkspace::initialize(const torch::Device& device) {
   float_workspace_buffer_ =
       torch::empty({FLAGS_flashinfer_workspace_buffer_size},
                    torch::dtype(torch::kUInt8).device(device));
+  LOG(ERROR) << "===============================> FlashinferWorkspace: 1024 * "
+                "1024 * 1024";
   int_workspace_buffer_ = torch::empty(
       {8 * 1024 * 1024}, torch::dtype(torch::kUInt8).device(device));
   page_locked_int_workspace_buffer_ = torch::empty(
