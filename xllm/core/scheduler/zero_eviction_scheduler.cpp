@@ -353,9 +353,12 @@ void ZeroEvictionScheduler::handle_prefill_requests(
   // they may contian many sequences, so we should check here.
 
   while (!waiting_priority_queue_.empty() && remaining_seq_budget > 0 &&
-         remaining_token_budget > 0 &&
-         block_manager_pool_->kv_cache_utilization() <
-             FLAGS_prefill_scheduling_memory_usage_threshold) {
+         remaining_token_budget > 0) {
+    if (block_manager_pool_->kv_cache_utilization() >=
+        FLAGS_prefill_scheduling_memory_usage_threshold) {
+      blocks_exhausted = true;
+      break;
+    }
     std::shared_ptr<Request> request(waiting_priority_queue_.top());
     if (request->finished() || request->cancelled()) {
       block_manager_pool_->deallocate(request.get());
