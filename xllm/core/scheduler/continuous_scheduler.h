@@ -235,6 +235,8 @@ class ContinuousScheduler : public Scheduler {
 
   InstanceInfo instance_info_;
 
+  int32_t min_speculative_tokens_required_ = 0;
+
   void handle_prefill_requests(
       size_t& latency_budget,
       size_t& estimate_latency,
