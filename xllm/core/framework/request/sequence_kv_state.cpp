@@ -86,6 +86,10 @@ void KVCacheState::add_shared_kv_blocks(std::vector<Block>&& blocks,
     CHECK_GT(block_size, 0);
     num_shared_tokens =
         ((current_total_num_tokens - 1) / block_size) * block_size;
+    if (num_owned_shared_blocks_ > 0) {
+      num_owned_shared_blocks_--;
+      blocks_.pop_back();
+    }
   }
   CHECK_LT(num_shared_tokens, current_total_num_tokens);
   // update the kv cache position
