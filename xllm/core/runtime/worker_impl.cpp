@@ -90,6 +90,7 @@ WorkerImpl::WorkerImpl(const ParallelArgs& parallel_args,
   torch_npu::init_npu(device_name);
   npu_stream_helper_ = std::make_unique<NPUStreamHelper>();
   extra_stream_helper_ = std::make_unique<NPUStreamHelper>();
+  threadpool_.schedule([this]() mutable { c10_npu::SetDevice(device_.index()); });
   general_threadpool_.schedule(
       [this]() mutable { c10_npu::SetDevice(device_.index()); });
 
