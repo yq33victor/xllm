@@ -545,6 +545,10 @@ void ChatServiceImpl::process_async_impl(std::shared_ptr<ChatCall> call) {
         std::make_shared<StreamingState>(request_params.tools, parser_format_);
   }
 
+  auto saved_tools = request_params.tools;
+  auto saved_streaming = request_params.streaming;
+  auto saved_request_id = request_params.request_id;
+
   master_->handle_request(
       std::move(messages),
       std::move(prompt_tokens),
@@ -553,12 +557,12 @@ void ChatServiceImpl::process_async_impl(std::shared_ptr<ChatCall> call) {
       [call,
        model,
        master = master_,
-       stream = request_params.streaming,
+       stream = saved_streaming,
        include_usage = include_usage,
        first_message_sent = std::unordered_set<size_t>(),
-       request_id = request_params.request_id,
+       request_id = std::move(saved_request_id),
        created_time = absl::ToUnixSeconds(absl::Now()),
-       json_tools = request_params.tools,
+       json_tools = std::move(saved_tools),
        parser_format = parser_format_,
        streaming_state = streaming_state,
        has_tool_support =
@@ -659,6 +663,9 @@ void MMChatServiceImpl::process_async(std::shared_ptr<MMChatCall> call) {
     include_usage = rpc_request.stream_options().include_usage();
   }
 
+  auto saved_streaming = request_params.streaming;
+  auto saved_request_id = request_params.request_id;
+
   // schedule the request
   master_->handle_request(
       std::move(messages),
@@ -667,10 +674,10 @@ void MMChatServiceImpl::process_async(std::shared_ptr<MMChatCall> call) {
       [call,
        model,
        master = master_,
-       stream = request_params.streaming,
+       stream = saved_streaming,
        include_usage = include_usage,
        first_message_sent = std::unordered_set<size_t>(),
-       request_id = request_params.request_id,
+       request_id = std::move(saved_request_id),
        created_time = absl::ToUnixSeconds(absl::Now())](
           const RequestOutput& req_output) mutable -> bool {
         if (req_output.status.has_value()) {
