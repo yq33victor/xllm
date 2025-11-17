@@ -42,8 +42,7 @@ class LLMWorkerImpl : public WorkerImpl {
   // initialize model, cache manager. blocking call
   bool init_model(ModelContext& context) override;
 
-  std::optional<ForwardOutput> step(
-      const BatchedForwardInputs& inputs) override;
+  std::optional<ForwardOutput> step(const ForwardInput& input) override;
 
   layer::LmHead get_lm_head() { return model_->get_lm_head(); };
 

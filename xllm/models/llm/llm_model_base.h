@@ -295,13 +295,13 @@ class LlmModelImplBase : public torch::nn::Module {
     auto attn_metadata =
         layer::AttentionMetadata::build(modified_input_params, is_prefill);
 
-    torch::Tensor h;
+    torch::Tensor h_ret;
     for (size_t i = 0; i < layers_.size(); i++) {
       auto& layer = layers_[i];
-      h = layer(
+      h_ret = layer(
           h, position, attn_metadata, kv_caches[i], modified_input_params);
     }
-    return norm_(h);
+    return norm_(h_ret);
 #endif
   }
 
