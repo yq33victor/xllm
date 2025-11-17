@@ -207,7 +207,7 @@ torch::Tensor AclGraphExecutorImpl::run(
   // If not in decode phase, use eager mode directly without acl graph
   if (!in_decoding_phase) {
     COUNTER_INC(num_model_execution_total_eager);
-    return model_->forward(tokens, positions, kv_caches, params);
+    return model_->forward(tokens[0], positions[0], kv_caches, params[0]);
   }
 
   // Only use acl graph in decode phase for performance optimization
@@ -237,7 +237,7 @@ torch::Tensor AclGraphExecutorImpl::run(
   // Early return if conditions are not suitable for graph operations
   if (!capture_supported) {
     COUNTER_INC(num_model_execution_total_eager);
-    return model_->forward(tokens, positions, kv_caches, params);
+    return model_->forward(tokens[0], positions[0], kv_caches, params[0]);
   }
 
   // Check if captured graph exists for this bucket size
@@ -273,7 +273,7 @@ torch::Tensor AclGraphExecutorImpl::run(
   // Fallback to eager mode if capture fails
   LOG(ERROR) << "Failed to capture ACL graph for bucket size: " << bucket_size;
   COUNTER_INC(num_model_execution_total_eager);
-  return model_->forward(tokens, positions, kv_caches, params);
+  return model_->forward(tokens[0], positions[0], kv_caches, params[0]);
 }
 
 void AclGraph::copy_data_to_graph_buffer(const torch::Tensor& tokens,

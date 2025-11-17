@@ -36,7 +36,7 @@ torch::Tensor BaseExecutorImpl::run(
     const std::vector<torch::Tensor>& positions,
     std::vector<KVCache>& kv_caches,
     const std::vector<ModelInputParams>& params) {
-  return model_->forward(tokens, positions, kv_caches, params);
+  return model_->forward(tokens[0], positions[0], kv_caches, params[0]);
 }
 
 }  // namespace xllm
