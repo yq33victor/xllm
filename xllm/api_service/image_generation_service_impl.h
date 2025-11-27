@@ -28,15 +28,16 @@ class DiTMaster;
 // a class to handle image generation requests
 class ImageGenerationServiceImpl : public APIServiceImpl<ImageGenerationCall> {
  public:
-  ImageGenerationServiceImpl(DiTMaster* master,
-                             const std::vector<std::string>& models);
+  ImageGenerationServiceImpl(
+      std::unordered_map<std::string, DiTMaster*>& masters,
+      const std::vector<std::string>& models);
 
   // brpc call_data needs to use shared_ptr
   void process_async_impl(std::shared_ptr<ImageGenerationCall> call);
 
  private:
   DISALLOW_COPY_AND_ASSIGN(ImageGenerationServiceImpl);
-  DiTMaster* master_ = nullptr;
+  std::unordered_map<std::string, DiTMaster*> masters_;
 };
 
 }  // namespace xllm

@@ -44,6 +44,8 @@ class DecodePriorityQueue;
 class ContinuousScheduler : public Scheduler {
  public:
   struct Options {
+    PROPERTY(std::string, model_path) = "";
+
     // the maximum number of tokens per batch
     PROPERTY(int32_t, max_tokens_per_batch) = 20000;
 

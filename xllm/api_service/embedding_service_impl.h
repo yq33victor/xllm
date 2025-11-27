@@ -30,7 +30,7 @@ using EmbeddingCall =
 // a class to handle completion requests
 class EmbeddingServiceImpl final : public APIServiceImpl<EmbeddingCall> {
  public:
-  EmbeddingServiceImpl(LLMMaster* master,
+  EmbeddingServiceImpl(std::unordered_map<std::string, LLMMaster*>& masters,
                        const std::vector<std::string>& models);
 
   // brpc call_data needs to use shared_ptr
@@ -38,21 +38,21 @@ class EmbeddingServiceImpl final : public APIServiceImpl<EmbeddingCall> {
 
  private:
   DISALLOW_COPY_AND_ASSIGN(EmbeddingServiceImpl);
-  LLMMaster* master_ = nullptr;
+  std::unordered_map<std::string, LLMMaster*> masters_;
 };
 
 using MMEmbeddingCall =
     NonStreamCall<proto::MMEmbeddingRequest, proto::EmbeddingResponse>;
 class MMEmbeddingServiceImpl : public APIServiceImpl<MMEmbeddingCall> {
  public:
-  MMEmbeddingServiceImpl(VLMMaster* master,
+  MMEmbeddingServiceImpl(std::unordered_map<std::string, VLMMaster*>& masters,
                          const std::vector<std::string>& models);
   // brpc call_data needs to use shared_ptr
   void process_async_impl(std::shared_ptr<MMEmbeddingCall> call);
 
  private:
   DISALLOW_COPY_AND_ASSIGN(MMEmbeddingServiceImpl);
-  VLMMaster* master_ = nullptr;
+  std::unordered_map<std::string, VLMMaster*> masters_;
 };
 
 }  // namespace xllm

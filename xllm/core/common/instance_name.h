@@ -19,6 +19,7 @@ limitations under the License.
 
 namespace xllm {
 
+// TODO: support multi-models
 class InstanceName {
  public:
   static InstanceName* name() {

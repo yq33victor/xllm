@@ -82,8 +82,8 @@ void WorkerServer::create_server(
   auto worker_service = std::make_shared<WorkerService>(options, device);
 
   auto addr = net::get_local_ip_addr();
-  auto worker_server =
-      ServerRegistry::get_instance().register_server("DistributeWorkerServer");
+  auto worker_server = ServerRegistry::get_instance().register_server(
+      "DistributeWorkerServer:" + options.model_path());
   if (!worker_server->start(worker_service, addr + ":0")) {
     LOG(ERROR) << "failed to start distribute worker server on address: "
                << addr;

@@ -17,6 +17,9 @@ limitations under the License.
 
 #include <folly/futures/Future.h>
 
+#include <cstdio>
+#include <string>
+
 #include "framework/batch/batch.h"
 #include "framework/block/block_manager_pool.h"
 #include "framework/model/model_args.h"
@@ -130,6 +133,13 @@ class Engine {
     LOG(FATAL) << " unlink_cluster is notimplemented!";
   };
 
+  // TODO: rename/refactor me
+  virtual int64_t calculate_free_capacity() {}
+  virtual int64_t get_max_free_capacity() { return free_mem_capacity_; }
+  virtual void set_avaiable_capacity(int64_t capacity) {
+    free_mem_capacity_ = capacity;
+  }
+
   struct KVCacheCapacity {
     int64_t n_blocks = 0;
     int64_t n_pages = 0;  // for continuous kvcache
@@ -137,6 +147,15 @@ class Engine {
     int64_t slot_size = 0;
     int64_t index_slot_size = 0;
     int64_t n_layers = 0;
+
+    void print() const {
+      LOG(INFO) << "KVCacheCapacity: n_blocks = " << n_blocks
+                << ", n_pages = " << n_pages
+                << ", cache_size_in_bytes = " << cache_size_in_bytes
+                << ", slot_size = " << slot_size
+                << ", index_slot_size = " << index_slot_size
+                << ", n_layers = " << n_layers;
+    }
   };
 
  protected:
@@ -152,5 +171,8 @@ class Engine {
 
   // tokenizer
   std::unique_ptr<Tokenizer> tokenizer_;
+
+  // TODO: refactor
+  int64_t free_mem_capacity_ = 0;
 };
 }  // namespace xllm

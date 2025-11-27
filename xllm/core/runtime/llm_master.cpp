@@ -43,11 +43,21 @@ limitations under the License.
 namespace xllm {
 volatile bool LLMAssistantMaster::running_ = false;
 
-LLMMaster::LLMMaster(const Options& options)
+LLMMaster::LLMMaster(const Options& options,
+                     std::shared_ptr<MasterCoordinator> master_coordinator)
     : Master(options,
-             options.draft_model_path().value_or("").empty()
-                 ? EngineType::LLM
-                 : EngineType::SSM) {
+             options.draft_model_path().value_or("").empty() ? EngineType::LLM
+                                                             : EngineType::SSM),
+      master_coordinator_(master_coordinator) {
+  // Refactor
+  master_coordinator_->set_estimate_kv_mem(options.current_model_idx(),
+                                           engine_->get_max_free_capacity());
+}
+
+void LLMMaster::init() {
+  // Refactor
+  engine_->set_avaiable_capacity(master_coordinator_->plan_mem());
+
   CHECK(engine_->init());
   task_type_ = options_.task_type();
 
@@ -69,7 +79,8 @@ LLMMaster::LLMMaster(const Options& options)
   }
 
   ContinuousScheduler::Options scheduler_options;
-  scheduler_options.max_tokens_per_batch(options_.max_tokens_per_batch())
+  scheduler_options.model_path(options_.model_path())
+      .max_tokens_per_batch(options_.max_tokens_per_batch())
       .max_seqs_per_batch(options_.max_seqs_per_batch())
       .max_tokens_per_chunk_for_prefill(
           options_.max_tokens_per_chunk_for_prefill())

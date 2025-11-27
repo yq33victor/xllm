@@ -30,7 +30,7 @@ using CompletionCall =
 // a class to handle completion requests
 class CompletionServiceImpl final : public APIServiceImpl<CompletionCall> {
  public:
-  CompletionServiceImpl(LLMMaster* master,
+  CompletionServiceImpl(std::unordered_map<std::string, LLMMaster*>& masters,
                         const std::vector<std::string>& models);
 
   // brpc call_data needs to use shared_ptr
@@ -38,7 +38,7 @@ class CompletionServiceImpl final : public APIServiceImpl<CompletionCall> {
 
  private:
   DISALLOW_COPY_AND_ASSIGN(CompletionServiceImpl);
-  LLMMaster* master_ = nullptr;
+  std::unordered_map<std::string, LLMMaster*> masters_;
 };
 
 }  // namespace xllm

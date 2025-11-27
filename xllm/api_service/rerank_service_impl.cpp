@@ -27,10 +27,11 @@ limitations under the License.
 #include "util/uuid.h"
 
 namespace xllm {
-RerankServiceImpl::RerankServiceImpl(LLMMaster* master,
-                                     const std::vector<std::string>& models)
-    : APIServiceImpl(models), master_(master) {
-  CHECK(master_ != nullptr);
+RerankServiceImpl::RerankServiceImpl(
+    std::unordered_map<std::string, LLMMaster*>& masters,
+    const std::vector<std::string>& models)
+    : APIServiceImpl(models), masters_(masters) {
+  CHECK(masters_.size() > 0);
 }
 
 // rerank_async for brpc
@@ -69,7 +70,7 @@ void RerankServiceImpl::process_async_impl(std::shared_ptr<RerankCall> call) {
     return true;
   };
 
-  master_->handle_batch_request(documents, sps, batch_callback);
+  masters_[model]->handle_batch_request(documents, sps, batch_callback);
 
   // Wait for all tasks to complete
   counter.wait();

@@ -89,6 +89,7 @@ cc_library(
     master.h
     vlm_master.h
     dit_master.h
+    master_coordinator.h
   SRCS
     llm_master.cpp
     master.cpp

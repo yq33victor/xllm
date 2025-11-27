@@ -109,6 +109,9 @@ class LLMEngine : public Engine {
 
   std::shared_ptr<DistManager> get_dist_manager() { return dist_manager_; };
 
+  // TODO: rename me
+  virtual int64_t calculate_free_capacity() override;
+
  private:
   friend class SpeculativeEngine;
   // setup workers internal

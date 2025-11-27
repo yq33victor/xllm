@@ -156,7 +156,8 @@ void DistManager::setup_multi_node_workers(
         std::make_shared<CollectiveService>(
             dp_local_process_group_num, world_size, devices[0].index());
     XllmServer* collective_server =
-        ServerRegistry::get_instance().register_server("CollectiveServer");
+        ServerRegistry::get_instance().register_server("CollectiveServer:" +
+                                                       options.model_path());
     if (!collective_server->start(collective_service, master_node_addr)) {
       LOG(ERROR) << "failed to start collective server on address: "
                  << master_node_addr;

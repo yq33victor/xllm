@@ -36,40 +36,57 @@ limitations under the License.
 #include "xllm_metrics.h"
 namespace xllm {
 
-APIService::APIService(Master* master,
+APIService::APIService(std::vector<std::unique_ptr<Master>>& masters,
                        const std::vector<std::string>& model_names,
                        const std::vector<std::string>& model_versions)
-    : master_(master) {
+    : model_names_(model_names) {
+  CHECK(masters.size() == model_names.size())
+      << "The number of model names and masters are not equal";
+  CHECK(masters.size() == model_versions.size())
+      << "The number of model versions and master are not equal";
+
   if (FLAGS_backend == "llm") {
-    auto llm_master = dynamic_cast<LLMMaster*>(master);
+    std::unordered_map<std::string, LLMMaster*> llm_masters;
+    for (auto i = 0; i < masters.size(); ++i) {
+      masters_[model_names[i]] = masters[i].get();
+      llm_masters[model_names[i]] = dynamic_cast<LLMMaster*>(masters[i].get());
+    }
     completion_service_impl_ =
         ServiceImplFactory<CompletionServiceImpl>::create_service_impl(
-            llm_master, model_names);
+            llm_masters, model_names);
     chat_service_impl_ =
-        ServiceImplFactory<ChatServiceImpl>::create_service_impl(llm_master,
+        ServiceImplFactory<ChatServiceImpl>::create_service_impl(llm_masters,
                                                                  model_names);
     embedding_service_impl_ =
         ServiceImplFactory<EmbeddingServiceImpl>::create_service_impl(
-            llm_master, model_names);
+            llm_masters, model_names);
     if (FLAGS_enable_qwen3_reranker) {
       rerank_service_impl_ =
           ServiceImplFactory<Qwen3RerankServiceImpl>::create_service_impl(
-              llm_master, model_names);
+              llm_masters, model_names);
     } else {
       rerank_service_impl_ =
           ServiceImplFactory<RerankServiceImpl>::create_service_impl(
-              llm_master, model_names);
+              llm_masters, model_names);
     }
   } else if (FLAGS_backend == "vlm") {
-    auto vlm_master = dynamic_cast<VLMMaster*>(master);
+    std::unordered_map<std::string, VLMMaster*> vlm_masters;
+    for (auto i = 0; i < masters.size(); ++i) {
+      masters_[model_names[i]] = masters[i].get();
+      vlm_masters[model_names[i]] = dynamic_cast<VLMMaster*>(masters[i].get());
+    }
     mm_chat_service_impl_ =
-        std::make_unique<MMChatServiceImpl>(vlm_master, model_names);
+        std::make_unique<MMChatServiceImpl>(vlm_masters, model_names);
     mm_embedding_service_impl_ =
-        std::make_unique<MMEmbeddingServiceImpl>(vlm_master, model_names);
+        std::make_unique<MMEmbeddingServiceImpl>(vlm_masters, model_names);
   } else if (FLAGS_backend == "dit") {
+    std::unordered_map<std::string, DiTMaster*> dit_masters;
+    for (auto i = 0; i < masters.size(); ++i) {
+      masters_[model_names[i]] = masters[i].get();
+      dit_masters[model_names[i]] = dynamic_cast<DiTMaster*>(masters[i].get());
+    }
     image_generation_service_impl_ =
-        std::make_unique<ImageGenerationServiceImpl>(
-            dynamic_cast<DiTMaster*>(master), model_names);
+        std::make_unique<ImageGenerationServiceImpl>(dit_masters, model_names);
   }
   models_service_impl_ =
       ServiceImplFactory<ModelsServiceImpl>::create_service_impl(
@@ -403,7 +420,9 @@ void APIService::GetCacheInfo(::google::protobuf::RpcController* controller,
   std::vector<std::string> addrs;
   std::vector<int64_t> k_cache_ids;
   std::vector<int64_t> v_cache_ids;
-  master_->get_cache_info(cluster_ids, addrs, k_cache_ids, v_cache_ids);
+  // TODO: support multi-models
+  masters_[model_names_[0]]->get_cache_info(
+      cluster_ids, addrs, k_cache_ids, v_cache_ids);
 
   resp_pb->mutable_cluster_ids()->Add(cluster_ids.begin(), cluster_ids.end());
   resp_pb->mutable_addrs()->Add(addrs.begin(), addrs.end());
@@ -462,7 +481,8 @@ void APIService::LinkCluster(::google::protobuf::RpcController* controller,
   }
   std::vector<uint16_t> ports(req_pb->ports().begin(), req_pb->ports().end());
 
-  bool status = master_->link_cluster(
+  // TODO: support multi-models
+  bool status = masters_[model_names_[0]]->link_cluster(
       cluster_ids, addrs, device_ips, ports, req_pb->dp_size());
 
   resp_pb->set_status(status);
@@ -518,7 +538,8 @@ void APIService::UnlinkCluster(::google::protobuf::RpcController* controller,
   }
   std::vector<uint16_t> ports(req_pb->ports().begin(), req_pb->ports().end());
 
-  bool status = master_->unlink_cluster(
+  // TODO: support multi-models
+  bool status = masters_[model_names_[0]]->unlink_cluster(
       cluster_ids, addrs, device_ips, ports, req_pb->dp_size());
 
   resp_pb->set_status(status);

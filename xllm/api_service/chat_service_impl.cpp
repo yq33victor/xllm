@@ -559,15 +559,17 @@ bool send_result_to_client_brpc(std::shared_ptr<ChatCall> call,
 
 }  // namespace
 
-ChatServiceImpl::ChatServiceImpl(LLMMaster* master,
-                                 const std::vector<std::string>& models)
-    : APIServiceImpl(models),
-      master_(master),
-      tool_call_parser_format_(
-          master_->options().tool_call_parser().value_or("")),
-      reasoning_parser_format_(
-          master_->options().reasoning_parser().value_or("")) {
-  CHECK(master_ != nullptr);
+ChatServiceImpl::ChatServiceImpl(
+    std::unordered_map<std::string, LLMMaster*>& masters,
+    const std::vector<std::string>& models)
+    : APIServiceImpl(models), masters_(masters) {
+  for (const auto& master : masters_) {
+    tool_call_parser_formats_[master.first] =
+        master.second->options().tool_call_parser().value_or("");
+    reasoning_parser_formats_[master.first] =
+        master.second->options().reasoning_parser().value_or("");
+  }
+  CHECK(masters_.size() > 0);
 }
 
 // chat_async for brpc
@@ -581,7 +583,7 @@ void ChatServiceImpl::process_async_impl(std::shared_ptr<ChatCall> call) {
   }
 
   // Check if the request is being rate-limited.
-  if (master_->get_rate_limiter()->is_limited()) {
+  if (masters_[model]->get_rate_limiter()->is_limited()) {
     call->finish_with_error(
         StatusCode::RESOURCE_EXHAUSTED,
         "The number of concurrent requests has reached the limit.");
@@ -635,15 +637,15 @@ void ChatServiceImpl::process_async_impl(std::shared_ptr<ChatCall> call) {
   }
 
   is_force_reasoning_ = get_enable_thinking_from_request(
-      request_params.chat_template_kwargs, reasoning_parser_format_);
+      request_params.chat_template_kwargs, reasoning_parser_formats_[model]);
 
   std::shared_ptr<StreamOutputParser> stream_parser;
-  if (request_params.streaming && (!tool_call_parser_format_.empty() ||
-                                   !reasoning_parser_format_.empty())) {
+  if (request_params.streaming && (!tool_call_parser_formats_[model].empty() ||
+                                   !reasoning_parser_formats_[model].empty())) {
     stream_parser =
         std::make_shared<StreamOutputParser>(request_params.tools,
-                                             tool_call_parser_format_,
-                                             reasoning_parser_format_,
+                                             tool_call_parser_formats_[model],
+                                             reasoning_parser_formats_[model],
                                              is_force_reasoning_);
     CHECK(stream_parser != nullptr) << "create StreamOutputParser failed!";
   }
@@ -652,22 +654,22 @@ void ChatServiceImpl::process_async_impl(std::shared_ptr<ChatCall> call) {
   auto saved_streaming = request_params.streaming;
   auto saved_request_id = request_params.request_id;
 
-  master_->handle_request(
+  masters_[model]->handle_request(
       std::move(messages),
       std::move(prompt_tokens),
       std::move(request_params),
       call.get(),
       [call,
        model,
-       master = master_,
+       master = masters_[model],
        stream = std::move(saved_streaming),
        include_usage = include_usage,
        first_message_sent = std::unordered_set<size_t>(),
        request_id = std::move(saved_request_id),
        created_time = absl::ToUnixSeconds(absl::Now()),
        json_tools = std::move(saved_tools),
-       tool_call_parser_format = tool_call_parser_format_,
-       reasoning_parser_format = reasoning_parser_format_,
+       tool_call_parser_format = tool_call_parser_formats_[model],
+       reasoning_parser_format = reasoning_parser_formats_[model],
        is_force_reasoning = is_force_reasoning_,
        stream_parser =
            stream_parser](const RequestOutput& req_output) mutable -> bool {
@@ -711,10 +713,11 @@ void ChatServiceImpl::process_async_impl(std::shared_ptr<ChatCall> call) {
       });
 }
 
-MMChatServiceImpl::MMChatServiceImpl(VLMMaster* master,
-                                     const std::vector<std::string>& models)
-    : APIServiceImpl(models), master_(master) {
-  CHECK(master != nullptr);
+MMChatServiceImpl::MMChatServiceImpl(
+    std::unordered_map<std::string, VLMMaster*>& masters,
+    const std::vector<std::string>& models)
+    : APIServiceImpl(models), masters_(masters) {
+  CHECK(masters.size() > 0);
 }
 
 void MMChatServiceImpl::process_async_impl(std::shared_ptr<MMChatCall> call) {
@@ -727,7 +730,7 @@ void MMChatServiceImpl::process_async_impl(std::shared_ptr<MMChatCall> call) {
   }
 
   // Check if the request is being rate-limited.
-  if (master_->get_rate_limiter()->is_limited()) {
+  if (masters_[model]->get_rate_limiter()->is_limited()) {
     call->finish_with_error(
         StatusCode::RESOURCE_EXHAUSTED,
         "The number of concurrent requests has reached the limit.");
@@ -739,7 +742,7 @@ void MMChatServiceImpl::process_async_impl(std::shared_ptr<MMChatCall> call) {
 
   std::vector<Message> messages;
   if (!build_messages<MMChatCall>(
-          req_messages, messages, call, master_->get_image_limit())) {
+          req_messages, messages, call, masters_[model]->get_image_limit())) {
     return;
   }
 
@@ -752,12 +755,12 @@ void MMChatServiceImpl::process_async_impl(std::shared_ptr<MMChatCall> call) {
   auto saved_request_id = request_params.request_id;
 
   // schedule the request
-  master_->handle_request(
+  masters_[model]->handle_request(
       std::move(messages),
       std::move(request_params),
       [call,
        model,
-       master = master_,
+       master = masters_[model],
        stream = std::move(saved_streaming),
        include_usage = include_usage,
        first_message_sent = std::unordered_set<size_t>(),

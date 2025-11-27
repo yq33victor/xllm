@@ -20,9 +20,9 @@ limitations under the License.
 namespace xllm {
 
 Qwen3RerankServiceImpl::Qwen3RerankServiceImpl(
-    LLMMaster* master,
+    std::unordered_map<std::string, LLMMaster*>& masters,
     const std::vector<std::string>& models)
-    : RerankServiceImpl(master, models) {}
+    : RerankServiceImpl(masters, models) {}
 
 void Qwen3RerankServiceImpl::process_async_impl(
     std::shared_ptr<RerankCall> call) {
@@ -65,7 +65,7 @@ void Qwen3RerankServiceImpl::process_async_impl(
     return true;
   };
 
-  master_->handle_batch_request(reqs, sps, batch_callback);
+  masters_[model]->handle_batch_request(reqs, sps, batch_callback);
 
   // Wait for all tasks to complete
   counter.wait();

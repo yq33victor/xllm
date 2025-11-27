@@ -99,6 +99,15 @@ LLMEngine::LLMEngine(const runtime::Options& options,
 
   // init thread pool
   threadpool_ = std::make_unique<ThreadPool>(16);
+
+  // init multi-models
+  if (options.node_rank() == 0) {
+    if (!init_model()) {
+      LOG(FATAL) << "Failed to init model from: " << options_.model_path();
+    }
+
+    calculate_free_capacity();
+  }
 }
 
 void LLMEngine::process_group_test() {
@@ -126,10 +135,10 @@ void LLMEngine::process_group_test() {
 }
 
 bool LLMEngine::init() {
-  if (!init_model()) {
-    LOG(ERROR) << "Failed to init model from: " << options_.model_path();
-    return false;
-  }
+  // if (!init_model()) {
+  //   LOG(ERROR) << "Failed to init model from: " << options_.model_path();
+  //   return false;
+  // }
 
   if (FLAGS_enable_eplb) {
     int32_t num_layers = args_.n_layers() - args_.first_k_dense_replace();
@@ -139,6 +148,7 @@ bool LLMEngine::init() {
   }
 
   auto kv_cache_cap = estimate_kv_cache_capacity();
+  kv_cache_cap.print();
 
   if (!(FLAGS_enable_continuous_kvcache
             ? allocate_continuous_kv_cache(kv_cache_cap)
@@ -214,7 +224,7 @@ bool LLMEngine::init_model() {
   return true;
 }
 
-Engine::KVCacheCapacity LLMEngine::estimate_kv_cache_capacity() {
+int64_t LLMEngine::calculate_free_capacity() {
   const int64_t max_cache_size = options_.max_cache_size();
   const double max_memory_utilization = options_.max_memory_utilization();
 
@@ -253,6 +263,51 @@ Engine::KVCacheCapacity LLMEngine::estimate_kv_cache_capacity() {
     cache_size_in_bytes = std::min(cache_size_in_bytes, available_memory);
   }
 
+  free_mem_capacity_ = cache_size_in_bytes;
+  return cache_size_in_bytes;
+}
+
+Engine::KVCacheCapacity LLMEngine::estimate_kv_cache_capacity() {
+  /*
+    const int64_t max_cache_size = options_.max_cache_size();
+    const double max_memory_utilization = options_.max_memory_utilization();
+
+    std::vector<folly::SemiFuture<std::tuple<int64_t, int64_t>>> futures;
+    futures.reserve(worker_clients_num_);
+    for (auto& worker : worker_clients_) {
+      futures.push_back(worker->estimate_kv_cache_capacity_async());
+    }
+
+    int64_t cache_size_in_bytes = std::numeric_limits<int64_t>::max();
+    auto results = folly::collectAll(futures).get();
+    for (size_t i = 0; i < results.size(); ++i) {
+      if (!results[i].hasValue()) {
+        LOG(ERROR) << "Failed to estimate kv cache capacity for worker: " << i;
+        continue;
+      }
+
+      auto [available_memory, total_memory] = results[i].value();
+      LOG(INFO) << "worker #" << i
+                << ": available memory: " << readable_size(available_memory)
+                << ", total memory: " << readable_size(total_memory)
+                << ". Using max_memory_utilization: " << max_memory_utilization
+                << ", max_cache_size: " << readable_size(max_cache_size);
+      GAUGE_SET(weight_size_in_kilobytes,
+                (total_memory - available_memory) / 1024);
+      GAUGE_SET(total_memory_size_in_kilobytes, total_memory / 1024);
+      // apply memory cap from config if it is set
+      if (max_memory_utilization < 1.0) {
+        const int64_t buffer_memory =
+            total_memory * (1.0 - max_memory_utilization);
+        available_memory -= buffer_memory;
+      }
+      if (max_cache_size > 0) {
+        available_memory = std::min(available_memory, max_cache_size);
+      }
+      cache_size_in_bytes = std::min(cache_size_in_bytes, available_memory);
+    }
+  */
+  int64_t cache_size_in_bytes = free_mem_capacity_;
   Engine::KVCacheCapacity kv_cache_cap;
   kv_cache_cap.cache_size_in_bytes = std::max(cache_size_in_bytes, int64_t(0));
   CHECK_GT(kv_cache_cap.cache_size_in_bytes, 0)

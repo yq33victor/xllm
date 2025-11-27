@@ -76,6 +76,7 @@ void XTensorManagerPool::setup_multi_node_xtensor_managers(
       std::shared_ptr<CollectiveService> collective_service =
           std::make_shared<CollectiveService>(
               dp_local_process_group_num, world_size, devices[0].index());
+      // TODO: support multi-models
       XllmServer* collective_server =
           ServerRegistry::get_instance().register_server(
               "XTensorManagerCollectiveServer");

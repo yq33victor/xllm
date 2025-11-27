@@ -23,9 +23,9 @@ template <typename T>
 class ServiceImplFactory {
  public:
   static std::unique_ptr<T> create_service_impl(
-      LLMMaster* master,
+      std::unordered_map<std::string, LLMMaster*>& masters,
       const std::vector<std::string>& model_names) {
-    auto service_impl = std::make_unique<T>(master, model_names);
+    auto service_impl = std::make_unique<T>(masters, model_names);
     if (!service_impl) {
       LOG(ERROR) << "handler is nullptr";
     }

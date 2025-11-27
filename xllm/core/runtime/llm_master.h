@@ -38,7 +38,9 @@ class Call;
 
 class LLMMaster : public Master {
  public:
-  explicit LLMMaster(const Options& options);
+  explicit LLMMaster(
+      const Options& options,
+      std::shared_ptr<MasterCoordinator> master_coordinator = nullptr);
   ~LLMMaster();
 
   // handle a request, the engine will execute the request asynchronously
@@ -65,6 +67,8 @@ class LLMMaster : public Master {
   void handle_batch_request(std::vector<std::vector<Message>> conversations,
                             std::vector<RequestParams> sp,
                             BatchOutputCallback callback);
+
+  void init() override;
 
   // start running loop
   void run() override;
@@ -131,6 +135,8 @@ class LLMMaster : public Master {
   std::atomic_bool running_{false};
 
   std::string task_type_;
+
+  std::shared_ptr<MasterCoordinator> master_coordinator_;
 };
 
 class LLMAssistantMaster : public Master {

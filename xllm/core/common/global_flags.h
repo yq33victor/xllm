@@ -29,8 +29,6 @@ DECLARE_int32(rpc_idle_timeout_s);
 
 DECLARE_int32(num_threads);
 
-DECLARE_string(model_id);
-
 DECLARE_string(model);
 
 DECLARE_string(backend);

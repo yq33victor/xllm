@@ -25,6 +25,7 @@ limitations under the License.
 #include "common/options.h"
 #include "common/rate_limiter.h"
 #include "common/types.h"
+#include "core/runtime/master_coordinator.h"
 #include "framework/request/request_params.h"
 #include "runtime/engine.h"
 namespace xllm {
@@ -33,6 +34,7 @@ class Master {
  public:
   explicit Master(const Options& options, EngineType type);
   virtual ~Master() = default;
+  virtual void init() {}
   virtual void run() = 0;
   virtual const Options& options() const { return options_; }
 
@@ -65,7 +67,9 @@ class Master {
   RateLimiter rate_limiter_;
 };
 
-std::unique_ptr<Master> create_master(const std::string& backend,
-                                      const Options& options);
+std::unique_ptr<Master> create_master(
+    const std::string& backend,
+    const Options& options,
+    std::shared_ptr<MasterCoordinator> master_coordinator = nullptr);
 
 }  // namespace xllm

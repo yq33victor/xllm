@@ -120,8 +120,8 @@ PDOOCScheduler::~PDOOCScheduler() {
 void PDOOCScheduler::start_rpc_server() {
   std::unique_ptr<PDOOCService> service =
       std::make_unique<PDOOCService>(this, engine_);
-  auto rpc_server =
-      ServerRegistry::get_instance().register_server("PDOOCServer");
+  auto rpc_server = ServerRegistry::get_instance().register_server(
+      "PDOOCServer:" + options_.model_path());
   if (!rpc_server->start(std::move(service))) {
     LOG(ERROR) << "Failed to start brpc disagg pd server on port "
                << FLAGS_disagg_pd_port;

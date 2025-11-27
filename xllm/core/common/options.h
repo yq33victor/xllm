@@ -35,6 +35,9 @@ class Options {
   std::string to_string() const;
 
  private:
+  PROPERTY(int32_t, serve_model_num) = 1;
+  PROPERTY(int32_t, current_model_idx) = 0;
+
   PROPERTY(std::string, model_path);
 
   PROPERTY(std::string, model_id);

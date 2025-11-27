@@ -28,7 +28,8 @@ using ChatCall = StreamCall<proto::ChatRequest, proto::ChatResponse>;
 // a class to handle completion requests
 class ChatServiceImpl final : public APIServiceImpl<ChatCall> {
  public:
-  ChatServiceImpl(LLMMaster* master, const std::vector<std::string>& models);
+  ChatServiceImpl(std::unordered_map<std::string, LLMMaster*>& masters,
+                  const std::vector<std::string>& models);
 
   // brpc call_data needs to use shared_ptr
   void process_async_impl(std::shared_ptr<ChatCall> call);
@@ -36,9 +37,9 @@ class ChatServiceImpl final : public APIServiceImpl<ChatCall> {
  private:
   DISALLOW_COPY_AND_ASSIGN(ChatServiceImpl);
 
-  LLMMaster* master_ = nullptr;
-  const std::string tool_call_parser_format_;
-  const std::string reasoning_parser_format_;
+  std::unordered_map<std::string, LLMMaster*> masters_;
+  std::unordered_map<std::string, std::string> tool_call_parser_formats_;
+  std::unordered_map<std::string, std::string> reasoning_parser_formats_;
   bool is_force_reasoning_ = false;
 };
 
@@ -48,7 +49,8 @@ using MMChatCall = StreamCall<proto::MMChatRequest, proto::ChatResponse>;
 // a class to handle mm chat completion requests
 class MMChatServiceImpl : public APIServiceImpl<MMChatCall> {
  public:
-  MMChatServiceImpl(VLMMaster* master, const std::vector<std::string>& models);
+  MMChatServiceImpl(std::unordered_map<std::string, VLMMaster*>& masters,
+                    const std::vector<std::string>& models);
 
   // brpc call_data needs to use shared_ptr
   void process_async_impl(std::shared_ptr<MMChatCall> call);
@@ -56,7 +58,7 @@ class MMChatServiceImpl : public APIServiceImpl<MMChatCall> {
  private:
   DISALLOW_COPY_AND_ASSIGN(MMChatServiceImpl);
 
-  VLMMaster* master_ = nullptr;
+  std::unordered_map<std::string, VLMMaster*> masters_;
 };
 
 }  // namespace xllm

@@ -62,10 +62,10 @@ bool send_result_to_client_brpc(std::shared_ptr<ImageGenerationCall> call,
 }  // namespace
 
 ImageGenerationServiceImpl::ImageGenerationServiceImpl(
-    DiTMaster* master,
+    std::unordered_map<std::string, DiTMaster*>& masters,
     const std::vector<std::string>& models)
-    : APIServiceImpl(models), master_{master} {
-  CHECK(master_ != nullptr);
+    : APIServiceImpl(models), masters_{masters} {
+  CHECK(masters_.size() > 0);
 }
 
 // image_generation_async for brpc
@@ -85,7 +85,7 @@ void ImageGenerationServiceImpl::process_async_impl(
 
   auto saved_request_id = request_params.request_id;
   // schedule the request
-  master_->handle_request(
+  masters_[model]->handle_request(
       std::move(request_params),
       call.get(),
       [call,

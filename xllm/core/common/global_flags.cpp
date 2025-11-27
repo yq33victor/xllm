@@ -52,8 +52,6 @@ BRPC_VALIDATE_GFLAG(max_concurrent_requests, brpc::NonNegativeInteger);
 
 // --- model config ---
 
-DEFINE_string(model_id, "", "hf model name.");
-
 DEFINE_string(model, "", "Name or path of the huggingface model to use.");
 
 DEFINE_string(

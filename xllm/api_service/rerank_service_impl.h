@@ -37,7 +37,8 @@ struct RerankRequestOutput {
 // a class to handle completion requests
 class RerankServiceImpl : public APIServiceImpl<RerankCall> {
  public:
-  RerankServiceImpl(LLMMaster* master, const std::vector<std::string>& models);
+  RerankServiceImpl(std::unordered_map<std::string, LLMMaster*>& masters,
+                    const std::vector<std::string>& models);
 
   // brpc call_data needs to use shared_ptr
   void process_async_impl(std::shared_ptr<RerankCall> call);
@@ -54,7 +55,7 @@ class RerankServiceImpl : public APIServiceImpl<RerankCall> {
 
  protected:
   DISALLOW_COPY_AND_ASSIGN(RerankServiceImpl);
-  LLMMaster* master_ = nullptr;
+  std::unordered_map<std::string, LLMMaster*> masters_;
 };
 
 }  // namespace xllm

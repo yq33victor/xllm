@@ -237,8 +237,8 @@ proto::DisaggPDService_Stub* DisaggPDScheduler::create_rpc_channel(
 void DisaggPDScheduler::start_rpc_server() {
   std::unique_ptr<DisaggPDService> service =
       std::make_unique<DisaggPDService>(this, engine_);
-  auto rpc_server =
-      ServerRegistry::get_instance().register_server("DisaggPDServer");
+  auto rpc_server = ServerRegistry::get_instance().register_server(
+      "DisaggPDServer:" + options_.model_path());
   if (!rpc_server->start(std::move(service))) {
     LOG(ERROR) << "Failed to start brpc disagg pd server on port "
                << FLAGS_disagg_pd_port;

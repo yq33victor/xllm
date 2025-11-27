@@ -153,10 +153,10 @@ bool send_result_to_client_brpc(std::shared_ptr<CompletionCall> call,
 }  // namespace
 
 CompletionServiceImpl::CompletionServiceImpl(
-    LLMMaster* master,
+    std::unordered_map<std::string, LLMMaster*>& masters,
     const std::vector<std::string>& models)
-    : APIServiceImpl(models), master_(master) {
-  CHECK(master_ != nullptr);
+    : APIServiceImpl(models), masters_(masters) {
+  CHECK(masters_.size() > 0);
 }
 
 // complete_async for brpc
@@ -171,7 +171,7 @@ void CompletionServiceImpl::process_async_impl(
   }
 
   // Check if the request is being rate-limited.
-  if (unlikely(master_->get_rate_limiter()->is_limited())) {
+  if (unlikely(masters_[model]->get_rate_limiter()->is_limited())) {
     call->finish_with_error(
         StatusCode::RESOURCE_EXHAUSTED,
         "The number of concurrent requests has reached the limit.");
@@ -199,14 +199,14 @@ void CompletionServiceImpl::process_async_impl(
   auto saved_streaming = request_params.streaming;
   auto saved_request_id = request_params.request_id;
   // schedule the request
-  master_->handle_request(
+  masters_[model]->handle_request(
       std::move(rpc_request.prompt()),
       std::move(prompt_tokens),
       std::move(request_params),
       call.get(),
       [call,
        model,
-       master = master_,
+       master = masters_[model],
        stream = std::move(saved_streaming),
        include_usage = include_usage,
        request_id = std::move(saved_request_id),

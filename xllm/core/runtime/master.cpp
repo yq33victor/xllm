@@ -234,10 +234,12 @@ Master::Master(const Options& options, EngineType type) : options_(options) {
   }
 }
 
-std::unique_ptr<Master> create_master(const std::string& backend,
-                                      const Options& options) {
+std::unique_ptr<Master> create_master(
+    const std::string& backend,
+    const Options& options,
+    std::shared_ptr<MasterCoordinator> master_coordinator) {
   if (backend == "llm") {
-    return std::make_unique<LLMMaster>(options);
+    return std::make_unique<LLMMaster>(options, master_coordinator);
   } else if (backend == "vlm") {
     return std::make_unique<VLMMaster>(options);
   } else if (backend == "dit") {

@@ -23,7 +23,7 @@ using RerankCall = NonStreamCall<proto::RerankRequest, proto::RerankResponse>;
 // a class to handle completion requests
 class Qwen3RerankServiceImpl final : public RerankServiceImpl {
  public:
-  Qwen3RerankServiceImpl(LLMMaster* master,
+  Qwen3RerankServiceImpl(std::unordered_map<std::string, LLMMaster*>& masters,
                          const std::vector<std::string>& models);
 
   // brpc call_data needs to use shared_ptr

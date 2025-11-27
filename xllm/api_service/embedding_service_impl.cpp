@@ -71,10 +71,10 @@ bool send_result_to_client_brpc(std::shared_ptr<EmbeddingCall> call,
 }  // namespace
 
 EmbeddingServiceImpl::EmbeddingServiceImpl(
-    LLMMaster* master,
+    std::unordered_map<std::string, LLMMaster*>& masters,
     const std::vector<std::string>& models)
-    : APIServiceImpl(models), master_(master) {
-  CHECK(master_ != nullptr);
+    : APIServiceImpl(models), masters_(masters) {
+  CHECK(masters_.size() > 0);
 }
 
 // embedding_async for brpc
@@ -98,7 +98,7 @@ void EmbeddingServiceImpl::process_async_impl(
 
   auto saved_request_id = request_params.request_id;
   // schedule the request
-  master_->handle_request(
+  masters_[model]->handle_request(
       std::move(input),
       std::nullopt,
       std::move(request_params),
@@ -121,10 +121,10 @@ void EmbeddingServiceImpl::process_async_impl(
 }
 
 MMEmbeddingServiceImpl::MMEmbeddingServiceImpl(
-    VLMMaster* master,
+    std::unordered_map<std::string, VLMMaster*>& masters,
     const std::vector<std::string>& models)
-    : APIServiceImpl(models), master_(master) {
-  CHECK(master_ != nullptr);
+    : APIServiceImpl(models), masters_(masters) {
+  CHECK(masters_.size() > 0);
 }
 
 void MMEmbeddingServiceImpl::process_async_impl(
@@ -146,12 +146,12 @@ void MMEmbeddingServiceImpl::process_async_impl(
 
   std::vector<Message> messages;
   if (!build_messages<MMEmbeddingCall>(
-          req_messages, messages, call, master_->get_image_limit())) {
+          req_messages, messages, call, masters_[model]->get_image_limit())) {
     return;
   }
   auto request_id = request_params.request_id;
   // schedule the request
-  master_->handle_request(
+  masters_[model]->handle_request(
       std::move(messages),
       std::move(request_params),
       [call,

@@ -40,6 +40,7 @@ void XTensorManagerServer::create_server(const xtensor::Options& options,
       xtensor_manager_global_rank, world_size, d);
 
   auto addr = net::get_local_ip_addr();
+  // TODO: support multi-models
   auto xtensor_manager_server = ServerRegistry::get_instance().register_server(
       "DistributeXTensorManagerServer");
   if (!xtensor_manager_server->start(xtensor_manager_service, addr + ":0")) {
