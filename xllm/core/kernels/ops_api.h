@@ -26,7 +26,12 @@ static const std::string kActModeSwish = "swish";
 
 void apply_rotary(RotaryParams& params);
 
-void active(ActivationParams& params);
+// Output tensor. Must be contiguous, dimension >= 2.
+// Must have same attributes (device, dtype) as input.
+// Only supports stride in dim(-2), stride(-1) must be 1.
+// Shape: [total_tokens, inner_size] where inner_size = in_channel/2 if
+// is_gated else in_channel.
+torch::Tensor active(ActivationParams& params);
 
 void reshape_paged_cache(ReshapePagedCacheParams& params);
 

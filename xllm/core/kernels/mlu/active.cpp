@@ -18,7 +18,6 @@ limitations under the License.
 namespace xllm::kernel::mlu {
 
 void active(const torch::Tensor& input,
-            torch::Tensor& output,
             const std::optional<torch::Tensor>& bias,
             const std::optional<torch::Tensor>& cusum_token_count,
             const std::string& act_mode,
@@ -32,6 +31,7 @@ void active(const torch::Tensor& input,
     hidden_act = "gelu";
     gelu_approximate = "tanh";
   }
+  torch::Tensor output;
   tmo::torch_api::active(input,
                          output,
                          bias,
@@ -40,5 +40,6 @@ void active(const torch::Tensor& input,
                          is_gated,
                          start_expert_id,
                          expert_size);
+  return output;
 }
 }  // namespace xllm::kernel::mlu

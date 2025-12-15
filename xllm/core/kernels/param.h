@@ -79,12 +79,6 @@ struct ActivationParams {
   // Last dimension is in_channel, which must be > 0.
   // If is_gated=true, in_channel must be even.
   torch::Tensor input;
-  // Output tensor. Must be contiguous, dimension >= 2.
-  // Must have same attributes (device, dtype) as input.
-  // Only supports stride in dim(-2), stride(-1) must be 1.
-  // Shape: [total_tokens, inner_size] where inner_size = in_channel/2 if
-  // is_gated else in_channel.
-  torch::Tensor output;
   // Optional bias tensor, only used for MoE activation.
   // If provided, cusum_token_count must also be provided.
   // Shape: [expert_size, in_channel]. Must be contiguous.
