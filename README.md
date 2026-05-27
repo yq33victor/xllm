@@ -1,3 +1,5 @@
+https://docker.aityp.com/r/docker.io/nvcr.io/nvidia
+
 <!-- Copyright 2022 JD Co.
 
 Licensed under the Apache License, Version 2.0 (the "License");
